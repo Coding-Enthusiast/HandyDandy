@@ -1,0 +1,45 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:HandyDandy.ViewModels;assembly=HandyDandy"
+        mc:Ignorable="d"
+        x:Class="HandyDandy.Views.MainWindow"
+        Height="700"
+        Width="650"
+        CanResize="False"
+        Title="Handy-Dandy">
+
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="auto,auto">
+    <Grid ColumnDefinitions="*,*,*" Grid.Row="0">
+      <ListBox Items="{Binding InputTypeList}"
+               SelectedItem="{Binding SelectedInputType}"
+               Classes="RadioButtonListBox"
+               Grid.Column="0"/>
+      <ListBox Items="{Binding OutputTypeList}"
+               SelectedItem="{Binding SelectedOutputType}"
+               Classes="RadioButtonListBox"
+               Grid.Column="1"/>
+      <ComboBox Items="{Binding MnemonicLengthList}"
+                SelectedItem="{Binding SelectedMnemonicLength}"
+                IsVisible="{Binding IsMnemonicLengthVisible}"
+                Classes="RadioButtonListBox"
+                Grid.Column="2">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Description}"/>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </Grid>
+
+    <ContentControl Content="{Binding Generator}"
+                    Grid.Row="1"/>
+
+  </Grid>
+
+</Window>

@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0.0</Version>
+    <Authors>Coding-Enthusiast</Authors>
+    <Company>Autarkysoft</Company>
+    <Copyright>Copyright (c) 2021 Coding Enthusiast</Copyright>
+    <PackageProjectUrl>https://github.com/Coding-Enthusiast/HandyDandy</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Coding-Enthusiast/HandyDandy</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>bitcoin</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autarkysoft.Bitcoin" Version="0.13.0" />
+    <PackageReference Include="Avalonia" Version="0.10.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.3" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:HandyDandy.ViewModels;assembly=HandyDandy"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="HandyDandy.Views.BinaryGridView">
+
+  <Design.DataContext>
+    <vm:BinaryGridViewModel/>
+  </Design.DataContext>
+
+  <Grid RowDefinitions="*,auto,auto">
+    <ItemsControl Items="{Binding Buttons}">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <UniformGrid Columns="16" Rows="16" Width="500"/>
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Button Content="{Binding State.Description}"
+                  Command="{Binding ChangeState}"
+                  Width="28"/>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <StackPanel Orientation="Horizontal" Spacing="3" Grid.Row="1">
+      <TextBox Text="{Binding ResultHex}"
+               Margin="5"/>
+      <Button Content="Copy"
+              Command="{Binding CopyHex}"/>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal" Spacing="3" Grid.Row="2">
+      <TextBox Text="{Binding ResultOutput}"
+               TextWrapping="Wrap"
+               ScrollViewer.VerticalScrollBarVisibility="Visible"
+               Margin="5"/>
+      <Button Content="Copy"
+              Command="{Binding CopyOutput}"/>
+    </StackPanel>
+
+  </Grid>
+</UserControl>

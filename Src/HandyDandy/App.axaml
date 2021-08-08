@@ -1,0 +1,54 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:HandyDandy"
+             x:Class="HandyDandy.App">
+
+  <Application.DataTemplates>
+    <local:ViewLocator/>
+  </Application.DataTemplates>
+
+  <Application.Styles>
+    <FluentTheme Mode="Light"/>
+  </Application.Styles>
+
+  <Application.Styles>
+    <Style Selector="Button">
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+
+    <!--Use Classes="DescriptiveItem" in any ComboBox to represent its items as DescriptiveItem-->
+    <Style Selector="ComboBox.DescriptiveItem">
+      <Setter Property="ItemTemplate">
+        <Setter.Value>
+          <DataTemplate>
+            <TextBlock Text="{Binding Value}"
+                       ToolTip.Tip="{Binding Description}"/>
+          </DataTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+    <Style Selector="ListBox">
+      <Setter Property="Margin" Value="3"/>
+    </Style>
+    <!--Use Classes="RadioButtonListBox" in any ListBox to represent its items as RadioButtons-->
+    <Style Selector="ListBox.RadioButtonListBox">
+      <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
+    <Style Selector="ListBox.RadioButtonListBox ListBoxItem">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <Border Background="Transparent">
+              <RadioButton Content="{TemplateBinding ContentPresenter.Content}"
+                           VerticalAlignment="Center"
+                           IsChecked="{Binding Path=IsSelected,RelativeSource={RelativeSource TemplatedParent},Mode=TwoWay}"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
+  </Application.Styles>
+
+</Application>
