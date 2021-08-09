@@ -1,0 +1,11 @@
+language: csharp
+solution: "./Src/HandyDandy.sln"
+mono: none
+dotnet: 5.0
+
+notifications:
+  email: false
+
+script:
+ - dotnet build ./Src/Tests/Tests.csproj
+ - dotnet test ./Src/Tests/Tests.csproj
