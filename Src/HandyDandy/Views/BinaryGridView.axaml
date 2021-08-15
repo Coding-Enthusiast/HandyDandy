@@ -28,6 +28,7 @@
 
     <StackPanel Orientation="Horizontal" Spacing="3" Grid.Row="1">
       <TextBox Text="{Binding ResultHex}"
+               Width="590"
                Margin="5"/>
       <Button Content="Copy"
               Command="{Binding CopyHex}"/>
@@ -35,6 +36,8 @@
     <StackPanel Orientation="Horizontal" Spacing="3" Grid.Row="2">
       <TextBox Text="{Binding ResultOutput}"
                TextWrapping="Wrap"
+               Width="590"
+               Height="70"
                ScrollViewer.VerticalScrollBarVisibility="Visible"
                Margin="5"/>
       <Button Content="Copy"
