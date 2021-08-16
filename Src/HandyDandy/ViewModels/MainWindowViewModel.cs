@@ -104,8 +104,8 @@ namespace HandyDandy.ViewModels
                 return SelectedInputType switch
                 {
                     InputType.BinaryGrid => new BinaryGridViewModel(len, SelectedOutputType),
-                    InputType.BinaryTextBox => throw new System.NotImplementedException(),
-                    InputType.HexadecimalTextBox => throw new System.NotImplementedException(),
+                    InputType.BinaryTextBox => new TextGridViewModel(len, SelectedOutputType),
+                    InputType.HexadecimalTextBox => new TextGridViewModel(len, SelectedOutputType),
                 };
             }
         }
