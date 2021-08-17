@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:HandyDandy.ViewModels;assembly=HandyDandy"
              mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="450"
-             x:Class="HandyDandy.Views.TextGridView">
+             x:Class="HandyDandy.Views.GroupedBinaryView">
 
   <Design.DataContext>
-    <vm:TextGridViewModel/>
+    <vm:GroupedBinaryViewModel/>
   </Design.DataContext>
 
   <Grid>
@@ -15,14 +15,17 @@
     <ItemsControl Items="{Binding Items}">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
-          <UniformGrid Columns="3"/>
+          <UniformGrid Columns="2"/>
         </ItemsPanelTemplate>
       </ItemsControl.ItemsPanel>
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Vertical">
-            <TextBlock Text="{Binding Hex}" HorizontalAlignment="Center"/>
-            <TextBlock Text="{Binding Bin}" HorizontalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+              <TextBlock Text="{Binding Value}" HorizontalAlignment="Center"/>
+              <TextBlock Text="{Binding Hex}" HorizontalAlignment="Center"/>
+              <TextBlock Text="{Binding Word}" HorizontalAlignment="Center"/>
+            </StackPanel>
             <ItemsControl Items="{Binding Buttons}">
               <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -41,6 +44,6 @@
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
-    
+
   </Grid>
 </UserControl>

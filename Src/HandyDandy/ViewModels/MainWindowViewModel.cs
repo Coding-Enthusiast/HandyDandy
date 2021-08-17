@@ -13,8 +13,7 @@ namespace HandyDandy.ViewModels
     public enum InputType
     {
         BinaryGrid,
-        BinaryTextBox,
-        HexadecimalTextBox
+        GroupedBinary,
     }
     public enum OutputType
     {
@@ -104,8 +103,7 @@ namespace HandyDandy.ViewModels
                 return SelectedInputType switch
                 {
                     InputType.BinaryGrid => new BinaryGridViewModel(len, SelectedOutputType),
-                    InputType.BinaryTextBox => new TextGridViewModel(len, SelectedOutputType),
-                    InputType.HexadecimalTextBox => new TextGridViewModel(len, SelectedOutputType),
+                    InputType.GroupedBinary => new GroupedBinaryViewModel(len, SelectedOutputType),
                 };
             }
         }

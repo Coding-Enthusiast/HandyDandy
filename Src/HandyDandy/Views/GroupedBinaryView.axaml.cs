@@ -8,9 +8,9 @@ using Avalonia.Markup.Xaml;
 
 namespace HandyDandy.Views
 {
-    public partial class TextGridView : UserControl
+    public partial class GroupedBinaryView : UserControl
     {
-        public TextGridView() => InitializeComponent();
+        public GroupedBinaryView() => InitializeComponent();
         private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }
 }
