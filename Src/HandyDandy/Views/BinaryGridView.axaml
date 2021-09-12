@@ -3,12 +3,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:HandyDandy.ViewModels;assembly=HandyDandy"
+             xmlns:mvvm="clr-namespace:HandyDandy.MVVM.Converters;assembly=HandyDandy"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="HandyDandy.Views.BinaryGridView">
 
   <Design.DataContext>
     <vm:BinaryGridViewModel/>
   </Design.DataContext>
+
+  <UserControl.Resources>
+    <mvvm:TernaryToColorConverter x:Key="stateToColorConv"/>
+  </UserControl.Resources>
 
   <Grid RowDefinitions="*,auto,auto">
     <ItemsControl Items="{Binding Buttons}">
@@ -21,6 +26,7 @@
         <DataTemplate>
           <Button Content="{Binding State.Description}"
                   Command="{Binding ChangeState}"
+                  Background="{Binding State.Value, Converter={StaticResource stateToColorConv}, Mode=OneWay}"
                   Width="28"/>
         </DataTemplate>
       </ItemsControl.ItemTemplate>
