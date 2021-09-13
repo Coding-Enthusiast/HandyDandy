@@ -98,7 +98,7 @@ namespace HandyDandy.ViewModels
                         return ex.ToString();
                     }
                 }
-                else if (outputType == OutputType.Mnemonic)
+                else if (outputType == OutputType.Bip39Mnemonic)
                 {
                     try
                     {

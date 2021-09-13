@@ -20,7 +20,9 @@ namespace HandyDandy.ViewModels
         {
             int bitLen = ot == OutputType.PrivateKey ? 8 : 11;
             len /= bitLen;
-            string[]? allWords = ot == OutputType.Mnemonic ? BIP0039.GetAllWords(BIP0039.WordLists.English) : null;
+            string[]? allWords = (ot == OutputType.Bip39Mnemonic || ot == OutputType.ElectrumMnemonic)
+                                ? BIP0039.GetAllWords(BIP0039.WordLists.English)
+                                : null;
             Items = Enumerable.Range(0, len).Select(i => new Quad(bitLen, allWords)).ToArray();
         }
 

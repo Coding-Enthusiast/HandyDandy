@@ -5,34 +5,11 @@
 
 using HandyDandy.Models;
 using HandyDandy.MVVM;
-using System.ComponentModel;
+using System;
 using System.Linq;
 
 namespace HandyDandy.ViewModels
 {
-    public enum InputType
-    {
-        BinaryGrid,
-        GroupedBinary,
-    }
-    public enum OutputType
-    {
-        PrivateKey,
-        Mnemonic
-    }
-    public enum MnemonicLength
-    {
-        [Description("12 words (128 bits)")]
-        Twelve,
-        [Description("15 words (160 bits)")]
-        Fifteen,
-        [Description("18 words (192 bits)")]
-        Eighteen,
-        [Description("21 words (224 bits)")]
-        TwentyOne,
-        [Description("24 words (256 bits)")]
-        TwentyFour
-    }
     public class MainWindowViewModel : ViewModelBase
     {
         public MainWindowViewModel()
@@ -44,7 +21,7 @@ namespace HandyDandy.ViewModels
             SelectedOutputType = OutputTypeList[0];
 
             MnemonicLengthList = EnumHelper.GetDescriptiveEnums<MnemonicLength>().ToArray();
-            SelectedMnemonicLength = MnemonicLengthList.First();
+            _selMnLen = MnemonicLengthList.First();
         }
 
 
@@ -67,7 +44,6 @@ namespace HandyDandy.ViewModels
             set => SetField(ref _selOut, value);
         }
 
-
         public DescriptiveEnum<MnemonicLength>[] MnemonicLengthList { get; }
 
         private DescriptiveEnum<MnemonicLength> _selMnLen;
@@ -78,7 +54,7 @@ namespace HandyDandy.ViewModels
         }
 
         [DependsOnProperty(nameof(SelectedOutputType))]
-        public bool IsMnemonicLengthVisible => SelectedOutputType == OutputType.Mnemonic;
+        public bool IsMnemonicLengthVisible => SelectedOutputType == OutputType.Bip39Mnemonic;
 
         [DependsOnProperty(nameof(SelectedInputType), nameof(SelectedOutputType), nameof(SelectedMnemonicLength))]
         public ViewModelBase Generator
@@ -88,25 +64,27 @@ namespace HandyDandy.ViewModels
                 int len = SelectedOutputType switch
                 {
                     OutputType.PrivateKey => 256,
-                    OutputType.Mnemonic => SelectedMnemonicLength.Value switch
+                    OutputType.Bip39Mnemonic => SelectedMnemonicLength.Value switch
                     {
                         MnemonicLength.Twelve => 128,
                         MnemonicLength.Fifteen => 160,
                         MnemonicLength.Eighteen => 192,
                         MnemonicLength.TwentyOne => 224,
                         MnemonicLength.TwentyFour => 256,
-                        _ => throw new System.NotImplementedException(),
+                        _ => throw new NotImplementedException(),
                     },
-                    _ => throw new System.NotImplementedException(),
+                    // We only support the default 12-word Electrum mnemonics
+                    OutputType.ElectrumMnemonic => 128,
+                    _ => throw new NotImplementedException(),
                 };
 
                 return SelectedInputType switch
                 {
                     InputType.BinaryGrid => new BinaryGridViewModel(len, SelectedOutputType),
                     InputType.GroupedBinary => new GroupedBinaryViewModel(len, SelectedOutputType),
+                    _ => throw new NotImplementedException(),
                 };
             }
         }
-
     }
 }

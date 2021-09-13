@@ -4,19 +4,9 @@
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
 using HandyDandy.MVVM;
-using System.ComponentModel;
 
 namespace HandyDandy.Models
 {
-    public enum TernaryState
-    {
-        [Description("?")]
-        Unset,
-        [Description("0")]
-        Zero,
-        [Description("1")]
-        One
-    }
     public class Ternary : InpcBase
     {
         private DescriptiveEnum<TernaryState> _state = new(TernaryState.Unset);
