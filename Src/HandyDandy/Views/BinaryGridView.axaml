@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:HandyDandy.ViewModels;assembly=HandyDandy"
              xmlns:mvvm="clr-namespace:HandyDandy.MVVM.Converters;assembly=HandyDandy"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="350"
              x:Class="HandyDandy.Views.BinaryGridView">
 
   <Design.DataContext>
@@ -27,28 +27,32 @@
           <Button Content="{Binding State.Description}"
                   Command="{Binding ChangeState}"
                   Background="{Binding State.Value, Converter={StaticResource stateToColorConv}, Mode=OneWay}"
+                  Margin="1"
+                  Height="28"
                   Width="28"/>
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
 
-    <StackPanel Orientation="Horizontal" Spacing="3" Grid.Row="1">
-      <TextBox Text="{Binding ResultHex}"
-               Width="590"
-               Margin="5"/>
-      <Button Content="Copy"
-              Command="{Binding CopyHex}"/>
-    </StackPanel>
-    <StackPanel Orientation="Horizontal" Spacing="3" Grid.Row="2">
-      <TextBox Text="{Binding ResultOutput}"
+    <Grid ColumnDefinitions="*,100" RowDefinitions="auto,auto" Margin="0,5,0,0" Grid.Row="1">
+      <TextBox Text="{Binding Result}"
                TextWrapping="Wrap"
-               Width="590"
-               Height="70"
-               ScrollViewer.VerticalScrollBarVisibility="Visible"
-               Margin="5"/>
-      <Button Content="Copy"
-              Command="{Binding CopyOutput}"/>
-    </StackPanel>
-
+               IsReadOnly="True"
+               Height="100"
+               Grid.Column="0"
+               Grid.RowSpan="2"/>
+      <Button Content="Copy hex"
+              Command="{Binding CopyHex}"
+              IsEnabled="{Binding IsComplete}"
+              Margin="3"
+              Grid.Column="1"
+              Grid.Row="0"/>
+      <Button Content="{Binding CopyButtonName}"
+              Command="{Binding CopyOutput}"
+              IsEnabled="{Binding IsComplete}"
+              Margin="3"
+              Grid.Column="1"
+              Grid.Row="1"/>
+    </Grid>
   </Grid>
 </UserControl>

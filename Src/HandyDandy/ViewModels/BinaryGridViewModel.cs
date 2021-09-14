@@ -13,14 +13,14 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 
 namespace HandyDandy.ViewModels
 {
     public class BinaryGridViewModel : ViewModelBase
     {
-        public BinaryGridViewModel()
+        public BinaryGridViewModel() : this(8, OutputType.PrivateKey)
         {
-            Buttons = Enumerable.Range(0, 8).Select(i => new Ternary()).ToArray();
         }
 
         public BinaryGridViewModel(int len, OutputType ot)
@@ -33,76 +33,118 @@ namespace HandyDandy.ViewModels
             {
                 item.PropertyChanged += Button_PropertyChanged;
             }
-            Result = new byte[Buttons.Length / 8];
+            Bytes = new byte[Buttons.Length / 8];
 
             outputType = ot;
+            CopyButtonName = ot switch
+            {
+                OutputType.PrivateKey => "Copy WIF",
+                OutputType.Bip39Mnemonic => "Copy mnemonic",
+                OutputType.ElectrumMnemonic => "Copy mnemonic",
+                _ => throw new NotImplementedException(),
+            };
         }
 
         private void Button_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             Debug.Assert(Buttons is not null && Buttons.Length > 0 && Buttons.Length % 8 == 0);
-            Debug.Assert(Result is not null && Result.Length == Buttons.Length / 8);
+            Debug.Assert(Bytes is not null && Bytes.Length == Buttons.Length / 8);
 
-            byte[] temp = new byte[Result.Length];
+            // TODO: this could be optimized by getting the index of the item that is changed and changing the corresponding
+            //       byte instead of the whole array.
+
+            byte[] temp = new byte[Bytes.Length];
 
             int bitIndex = 0;
             int byteIndex = 0;
+            bool b = true;
             while (bitIndex < Buttons.Length)
             {
                 int val = 0;
                 for (int i = 0; i < 8; i++)
                 {
-                    int bit = Buttons[bitIndex + i].State.Value == TernaryState.One ? 1 : 0;
-                    val |= bit << (7 - i);
+                    if (Buttons[bitIndex + i].State.Value == TernaryState.Unset)
+                    {
+                        b = false;
+                    }
+                    val |= Buttons[bitIndex + i].ToBit() << (7 - i);
                 }
                 Debug.Assert(val <= byte.MaxValue);
                 temp[byteIndex++] = (byte)val;
                 bitIndex += 8;
             }
 
-            Result = temp;
+            Bytes = temp;
+            IsComplete = b;
         }
 
         private readonly OutputType outputType;
 
-        public Ternary[] Buttons { get; private set; }
 
-        private byte[] _res;
-        public byte[] Result
+        public string CopyButtonName { get; }
+
+        private bool _isComplete;
+        public bool IsComplete
         {
-            get => _res;
-            set => SetField(ref _res, value);
+            get => _isComplete;
+            set => SetField(ref _isComplete, value);
         }
 
-        [DependsOnProperty(nameof(Result))]
-        public string ResultHex => Result == null ? string.Empty : Base16.Encode(Result);
+        public Ternary[] Buttons { get; private set; }
 
-        [DependsOnProperty(nameof(Result))]
-        public string ResultOutput
+        private byte[] _ba = Array.Empty<byte>();
+        public byte[] Bytes
+        {
+            get => _ba;
+            set => SetField(ref _ba, value);
+        }
+
+        [DependsOnProperty(nameof(Bytes))]
+        public string Result
         {
             get
             {
-                if (Result == null)
+                StringBuilder sb = new();
+                if (!IsComplete)
                 {
-                    return string.Empty;
+                    sb.AppendLine("Not all bits are set. The result is still weak and can not be copied.");
                 }
-                else if (outputType == OutputType.PrivateKey)
+
+                if (outputType == OutputType.PrivateKey)
                 {
                     try
                     {
-                        using PrivateKey temp = new(Result);
+                        using PrivateKey temp = new(Bytes);
                         return temp.ToWif(true);
+                    }
+                    catch (ArgumentOutOfRangeException ex)
+                    {
+                        sb.AppendLine("The current bit stream is creating an out of range key.");
+                        sb.AppendLine($"{ex.Message}");
                     }
                     catch (Exception ex)
                     {
-                        return ex.ToString();
+                        sb.AppendLine("An error occurred while converting the bit stream to a private key.");
+                        sb.AppendLine($"Error message: {ex.Message}");
                     }
                 }
                 else if (outputType == OutputType.Bip39Mnemonic)
                 {
                     try
                     {
-                        using BIP0039 temp = new(Result);
+                        using BIP0039 temp = new(Bytes);
+                        return temp.ToMnemonic();
+                    }
+                    catch (Exception ex)
+                    {
+                        return ex.ToString();
+                    }
+                }
+                else if (outputType == OutputType.ElectrumMnemonic)
+                {
+                    try
+                    {
+                        using ElectrumMnemonic temp = new(Bytes, ElectrumMnemonic.MnemonicType.SegWit);
                         return temp.ToMnemonic();
                     }
                     catch (Exception ex)
@@ -114,17 +156,37 @@ namespace HandyDandy.ViewModels
                 {
                     return "Undefined.";
                 }
+
+                return sb.ToString();
             }
         }
 
         public void CopyHex()
         {
-            Application.Current.Clipboard.SetTextAsync(ResultHex);
+            Debug.Assert(Bytes is not null && Bytes.Length != 0);
+            Debug.Assert(IsComplete);
+
+            string hex = Base16.Encode(Bytes);
+            Application.Current.Clipboard.SetTextAsync(hex);
         }
 
         public void CopyOutput()
         {
-            Application.Current.Clipboard.SetTextAsync(ResultOutput);
+            try
+            {
+                string res = outputType switch
+                {
+                    OutputType.PrivateKey => new PrivateKey(Bytes).ToWif(true),
+                    OutputType.Bip39Mnemonic => new BIP0039(Bytes).ToMnemonic(),
+                    OutputType.ElectrumMnemonic => new ElectrumMnemonic(Bytes, ElectrumMnemonic.MnemonicType.SegWit).ToMnemonic(),
+                    _ => throw new NotImplementedException()
+                };
+
+                Application.Current.Clipboard.SetTextAsync(res);
+            }
+            catch
+            {
+            }
         }
     }
 }
