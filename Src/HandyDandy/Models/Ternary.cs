@@ -18,12 +18,11 @@ namespace HandyDandy.Models
 
         public void ChangeState()
         {
-            State = State.Value switch
-            {
-                TernaryState.Unset => new DescriptiveEnum<TernaryState>(TernaryState.One),
-                TernaryState.Zero => new DescriptiveEnum<TernaryState>(TernaryState.One),
-                TernaryState.One => new DescriptiveEnum<TernaryState>(TernaryState.Zero),
-            };
+            State = State.Value == TernaryState.One ?
+                new DescriptiveEnum<TernaryState>(TernaryState.Zero) :
+                new DescriptiveEnum<TernaryState>(TernaryState.One);
         }
+
+        public int ToBit() => State.Value == TernaryState.One ? 1 : 0;
     }
 }
