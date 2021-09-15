@@ -74,7 +74,7 @@ namespace HandyDandy.ViewModels
                         _ => throw new NotImplementedException(),
                     },
                     // We only support the default 12-word Electrum mnemonics
-                    OutputType.ElectrumMnemonic => 128,
+                    OutputType.ElectrumMnemonic => 136,
                     _ => throw new NotImplementedException(),
                 };
 
