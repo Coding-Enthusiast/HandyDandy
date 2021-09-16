@@ -9,11 +9,28 @@ namespace HandyDandy.Models
 {
     public class Ternary : InpcBase
     {
+        public Ternary() : this(true)
+        {
+        }
+
+        public Ternary(bool isEnabled)
+        {
+            _enabled = isEnabled;
+        }
+
+
         private DescriptiveEnum<TernaryState> _state = new(TernaryState.Unset);
         public DescriptiveEnum<TernaryState> State
         {
             get => _state;
             set => SetField(ref _state, value);
+        }
+
+        private bool _enabled = true;
+        public bool IsEnabled
+        {
+            get => _enabled;
+            set => SetField(ref _enabled, value);
         }
 
         public void ChangeState()

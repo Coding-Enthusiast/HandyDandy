@@ -10,6 +10,39 @@ namespace Tests.Models
 {
     public class TernaryTests
     {
+        [Fact]
+        public void ConstructorTest()
+        {
+            var t1 = new Ternary();
+            var t2 = new Ternary(true);
+            var t3 = new Ternary(false);
+
+            Assert.True(t1.IsEnabled);
+            Assert.True(t2.IsEnabled);
+            Assert.False(t3.IsEnabled);
+
+            Assert.Equal(TernaryState.Unset, t1.State.Value);
+            Assert.Equal(TernaryState.Unset, t2.State.Value);
+            Assert.Equal(TernaryState.Unset, t3.State.Value);
+        }
+
+        [Fact]
+        public void RaisePropertyChangedEventTest()
+        {
+            var t = new Ternary();
+
+            Assert.PropertyChanged(t, nameof(t.IsEnabled), () => t.IsEnabled = false);
+            Assert.PropertyChanged(t, nameof(t.State), () => t.State = new DescriptiveEnum<TernaryState>(TernaryState.One));
+            
+            Assert.False(t.IsEnabled);
+            Assert.PropertyChanged(t, nameof(t.State), () => t.ChangeState());
+
+            // State change should raise the event regardless of button enabled state
+            Assert.PropertyChanged(t, nameof(t.IsEnabled), () => t.IsEnabled = true);
+            Assert.True(t.IsEnabled);
+            Assert.PropertyChanged(t, nameof(t.State), () => t.ChangeState());
+        }
+
         [Theory]
         [InlineData(TernaryState.Unset, TernaryState.One)]
         [InlineData(TernaryState.Zero, TernaryState.One)]
