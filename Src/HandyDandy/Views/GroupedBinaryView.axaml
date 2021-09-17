@@ -42,6 +42,7 @@
                   <Button Content="{Binding State.Description}"
                           Command="{Binding ChangeState}"
                           Background="{Binding State.Value, Converter={StaticResource stateToColorConv}, Mode=OneWay}"
+                          IsEnabled="{Binding IsEnabled}"
                           Width="25" Height="25"/>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>

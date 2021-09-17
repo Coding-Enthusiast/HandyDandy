@@ -27,6 +27,7 @@
           <Button Content="{Binding State.Description}"
                   Command="{Binding ChangeState}"
                   Background="{Binding State.Value, Converter={StaticResource stateToColorConv}, Mode=OneWay}"
+                  IsEnabled="{Binding IsEnabled}"
                   Margin="1"
                   Height="28"
                   Width="28"/>
