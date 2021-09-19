@@ -40,6 +40,13 @@ namespace HandyDandy.Models
                 new DescriptiveEnum<TernaryState>(TernaryState.One);
         }
 
+        public void SetState(bool bit)
+        {
+            State = new DescriptiveEnum<TernaryState>(bit ? TernaryState.One : TernaryState.Zero);
+        }
+
+        public void SetState(int bit) => SetState(bit == 1);
+
         public int ToBit() => State.Value == TernaryState.One ? 1 : 0;
     }
 }

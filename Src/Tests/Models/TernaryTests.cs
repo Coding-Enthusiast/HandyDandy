@@ -56,6 +56,36 @@ namespace Tests.Models
         }
 
         [Theory]
+        [InlineData(TernaryState.Unset, true, TernaryState.One)]
+        [InlineData(TernaryState.Unset, false, TernaryState.Zero)]
+        [InlineData(TernaryState.One, true, TernaryState.One)]
+        [InlineData(TernaryState.One, false, TernaryState.Zero)]
+        [InlineData(TernaryState.Zero, true, TernaryState.One)]
+        [InlineData(TernaryState.Zero, false, TernaryState.Zero)]
+        public void SetState_BoolTest(TernaryState initialState, bool b, TernaryState expected)
+        {
+            var t = new Ternary();
+            t.State.Value = initialState;
+            t.SetState(b);
+            Assert.Equal(t.State.Value, expected);
+        }
+
+        [Theory]
+        [InlineData(TernaryState.Unset, 1, TernaryState.One)]
+        [InlineData(TernaryState.Unset, 0, TernaryState.Zero)]
+        [InlineData(TernaryState.One, 1, TernaryState.One)]
+        [InlineData(TernaryState.One, 0, TernaryState.Zero)]
+        [InlineData(TernaryState.Zero, 1, TernaryState.One)]
+        [InlineData(TernaryState.Zero, 0, TernaryState.Zero)]
+        public void SetState_IntTest(TernaryState initialState, int i, TernaryState expected)
+        {
+            var t = new Ternary();
+            t.State.Value = initialState;
+            t.SetState(i);
+            Assert.Equal(t.State.Value, expected);
+        }
+
+        [Theory]
         [InlineData(TernaryState.Unset, 0)]
         [InlineData(TernaryState.Zero, 0)]
         [InlineData(TernaryState.One, 1)]
