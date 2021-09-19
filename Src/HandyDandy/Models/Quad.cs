@@ -3,25 +3,40 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
-using Autarkysoft.Bitcoin.ImprovementProposals;
 using HandyDandy.MVVM;
-using HandyDandy.ViewModels;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 
 namespace HandyDandy.Models
 {
     public class Quad : InpcBase
     {
-        public Quad() : this(2, new string[] { "Foo0", "Foo1", "Foo2", "Foo3" }) { }
+        public Quad() : this(2, new string[] { "Foo0", "Foo1", "Foo2", "Foo3" }, 1) { }
 
-        public Quad(int len, string[]? words)
+        public Quad(int len)
         {
-            Buttons = Enumerable.Range(0, len).Select(i => new Ternary()).ToArray();
-            foreach (var item in Buttons)
+            Buttons = new Ternary[len];
+            for (int i = 0; i < Buttons.Length; i++)
             {
-                item.PropertyChanged += Button_PropertyChanged;
+                Buttons[i] = new Ternary(true);
+                Buttons[i].PropertyChanged += Button_PropertyChanged;
+            }
+            needWords = false;
+        }
+
+        public Quad(int len, string[]? words, int disableCount)
+        {
+            Buttons = new Ternary[len];
+            int i = 0;
+            for (; i < Buttons.Length - disableCount; i++)
+            {
+                Buttons[i] = new Ternary(true);
+                Buttons[i].PropertyChanged += Button_PropertyChanged;
+            }
+            for (; i < Buttons.Length; i++)
+            {
+                Buttons[i] = new Ternary(false);
+                Buttons[i].PropertyChanged += Button_PropertyChanged;
             }
 
             needWords = words is not null;
@@ -32,14 +47,13 @@ namespace HandyDandy.Models
             }
         }
 
-
         private void Button_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             int result = 0;
             for (int i = 0; i < Buttons.Length; i++)
             {
                 int bit = Buttons[i].State.Value == TernaryState.One ? 1 : 0;
-                result |= bit << (Buttons.Length - i -1);
+                result |= bit << (Buttons.Length - i - 1);
             }
 
             Value = result;
