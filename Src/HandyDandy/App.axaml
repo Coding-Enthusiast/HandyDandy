@@ -1,11 +1,17 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:HandyDandy"
+             xmlns:mvvm="clr-namespace:HandyDandy.MVVM.Converters;assembly=HandyDandy"
              x:Class="HandyDandy.App">
 
   <Application.DataTemplates>
     <local:ViewLocator/>
   </Application.DataTemplates>
+
+  <Application.Resources>
+    <mvvm:TernaryToColorConverter x:Key="stateToColorConv"/>
+    <mvvm:TernaryToStringConverter x:Key="stateToStrConv"/>
+  </Application.Resources>
 
   <Application.Styles>
     <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
@@ -15,6 +21,17 @@
   <Application.Styles>
     <Style Selector="Button">
       <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+
+    <!--Use Classes="Ternary" in any Button to represent its items as a 3 state button-->
+    <Style Selector="Button.Ternary">
+      <Setter Property="Command" Value="{Binding ChangeState}"/>
+      <Setter Property="Content" Value="{Binding State, Converter={StaticResource stateToStrConv}}"/>
+      <Setter Property="Background" Value="{Binding State, Converter={StaticResource stateToColorConv}, Mode=OneWay}"/>
+      <Setter Property="IsEnabled" Value="{Binding IsEnabled}"/>
+      <Setter Property="Margin" Value="1"/>
+      <Setter Property="Height" Value="25"/>
+      <Setter Property="Width" Value="25"/>
     </Style>
 
     <!--Use Classes="DescriptiveItem" in any ComboBox to represent its items as DescriptiveItem-->

@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:HandyDandy.ViewModels;assembly=HandyDandy"
-             xmlns:mvvm="clr-namespace:HandyDandy.MVVM.Converters;assembly=HandyDandy"
              mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="450"
              x:Class="HandyDandy.Views.GroupedBinaryView">
 
@@ -11,12 +10,7 @@
     <vm:GroupedBinaryViewModel/>
   </Design.DataContext>
 
-  <UserControl.Resources>
-    <mvvm:TernaryToColorConverter x:Key="stateToColorConv"/>
-  </UserControl.Resources>
-
   <Grid>
-
     <ItemsControl Items="{Binding Items}">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
@@ -39,11 +33,7 @@
               </ItemsControl.ItemsPanel>
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                  <Button Content="{Binding State.Description}"
-                          Command="{Binding ChangeState}"
-                          Background="{Binding State.Value, Converter={StaticResource stateToColorConv}, Mode=OneWay}"
-                          IsEnabled="{Binding IsEnabled}"
-                          Width="25" Height="25"/>
+                  <Button Classes="Ternary"/>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -51,6 +41,5 @@
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
-
   </Grid>
 </UserControl>

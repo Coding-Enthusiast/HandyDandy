@@ -63,7 +63,7 @@ namespace HandyDandy.ViewModels
                 int val = 0;
                 for (int i = 0; i < 8; i++)
                 {
-                    if (Buttons[bitIndex + i].State.Value == TernaryState.Unset)
+                    if (Buttons[bitIndex + i].State == TernaryState.Unset)
                     {
                         b = false;
                     }

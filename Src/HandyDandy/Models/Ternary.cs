@@ -19,8 +19,8 @@ namespace HandyDandy.Models
         }
 
 
-        private DescriptiveEnum<TernaryState> _state = new(TernaryState.Unset);
-        public DescriptiveEnum<TernaryState> State
+        private TernaryState _state;
+        public TernaryState State
         {
             get => _state;
             set => SetField(ref _state, value);
@@ -33,20 +33,12 @@ namespace HandyDandy.Models
             set => SetField(ref _enabled, value);
         }
 
-        public void ChangeState()
-        {
-            State = State.Value == TernaryState.One ?
-                new DescriptiveEnum<TernaryState>(TernaryState.Zero) :
-                new DescriptiveEnum<TernaryState>(TernaryState.One);
-        }
+        public void ChangeState() => State = State == TernaryState.One ? TernaryState.Zero : TernaryState.One;
 
-        public void SetState(bool bit)
-        {
-            State = new DescriptiveEnum<TernaryState>(bit ? TernaryState.One : TernaryState.Zero);
-        }
+        public void SetState(bool bit) => State = bit ? TernaryState.One : TernaryState.Zero;
 
         public void SetState(int bit) => SetState(bit == 1);
 
-        public int ToBit() => State.Value == TernaryState.One ? 1 : 0;
+        public int ToBit() => State == TernaryState.One ? 1 : 0;
     }
 }

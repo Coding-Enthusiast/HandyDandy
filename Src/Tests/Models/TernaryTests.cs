@@ -21,9 +21,9 @@ namespace Tests.Models
             Assert.True(t2.IsEnabled);
             Assert.False(t3.IsEnabled);
 
-            Assert.Equal(TernaryState.Unset, t1.State.Value);
-            Assert.Equal(TernaryState.Unset, t2.State.Value);
-            Assert.Equal(TernaryState.Unset, t3.State.Value);
+            Assert.Equal(TernaryState.Unset, t1.State);
+            Assert.Equal(TernaryState.Unset, t2.State);
+            Assert.Equal(TernaryState.Unset, t3.State);
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace Tests.Models
             var t = new Ternary();
 
             Assert.PropertyChanged(t, nameof(t.IsEnabled), () => t.IsEnabled = false);
-            Assert.PropertyChanged(t, nameof(t.State), () => t.State = new DescriptiveEnum<TernaryState>(TernaryState.One));
+            Assert.PropertyChanged(t, nameof(t.State), () => t.State = TernaryState.One);
             
             Assert.False(t.IsEnabled);
             Assert.PropertyChanged(t, nameof(t.State), () => t.ChangeState());
@@ -50,9 +50,9 @@ namespace Tests.Models
         public void ChangeStateTest(TernaryState initialState, TernaryState expected)
         {
             var t = new Ternary();
-            t.State.Value = initialState;
+            t.State = initialState;
             t.ChangeState();
-            Assert.Equal(t.State.Value, expected);
+            Assert.Equal(t.State, expected);
         }
 
         [Theory]
@@ -65,9 +65,9 @@ namespace Tests.Models
         public void SetState_BoolTest(TernaryState initialState, bool b, TernaryState expected)
         {
             var t = new Ternary();
-            t.State.Value = initialState;
+            t.State = initialState;
             t.SetState(b);
-            Assert.Equal(t.State.Value, expected);
+            Assert.Equal(t.State, expected);
         }
 
         [Theory]
@@ -80,9 +80,9 @@ namespace Tests.Models
         public void SetState_IntTest(TernaryState initialState, int i, TernaryState expected)
         {
             var t = new Ternary();
-            t.State.Value = initialState;
+            t.State = initialState;
             t.SetState(i);
-            Assert.Equal(t.State.Value, expected);
+            Assert.Equal(t.State, expected);
         }
 
         [Theory]
@@ -92,7 +92,7 @@ namespace Tests.Models
         public void ToBitTest(TernaryState state, int expected)
         {
             var t = new Ternary();
-            t.State.Value = state;
+            t.State = state;
             int actual = t.ToBit();
             Assert.Equal(expected, actual);
         }

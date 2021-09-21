@@ -52,7 +52,7 @@ namespace HandyDandy.Models
             int result = 0;
             for (int i = 0; i < Buttons.Length; i++)
             {
-                int bit = Buttons[i].State.Value == TernaryState.One ? 1 : 0;
+                int bit = Buttons[i].ToBit();
                 result |= bit << (Buttons.Length - i - 1);
             }
 
