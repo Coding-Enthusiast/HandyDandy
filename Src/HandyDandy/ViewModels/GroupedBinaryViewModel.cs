@@ -16,14 +16,14 @@ namespace HandyDandy.ViewModels
     {
         public GroupedBinaryViewModel()
         {
-            Items = Enumerable.Range(0, 4).Select(i => new Quad()).ToArray();
+            Items = Enumerable.Range(0, 4).Select(i => new LinkedValues()).ToArray();
         }
 
         public GroupedBinaryViewModel(int len, OutputType ot, MnemonicLength mnLen)
         {
             if (ot == OutputType.PrivateKey)
             {
-                Items = Enumerable.Range(0, 32).Select(i => new Quad(8)).ToArray();
+                Items = Enumerable.Range(0, 32).Select(i => new LinkedValues(8)).ToArray();
             }
             else if (ot == OutputType.Bip39Mnemonic)
             {
@@ -64,21 +64,21 @@ namespace HandyDandy.ViewModels
                     throw new NotImplementedException();
                 }
 
-                Items = new Quad[wordCount];
+                Items = new LinkedValues[wordCount];
                 for (int i = 0; i < Items.Length - 1; i++)
                 {
-                    Items[i] = new Quad(11, allWords, 0);
+                    Items[i] = new LinkedValues(11, allWords, 0);
                     Items[i].PropertyChanged += GroupedBinaryViewModel_PropertyChanged;
                 }
-                Items[^1] = new Quad(11, allWords, checksumSize);
+                Items[^1] = new LinkedValues(11, allWords, checksumSize);
             }
             else if (ot == OutputType.ElectrumMnemonic)
             {
                 string[] allWords = BIP0039.GetAllWords(BIP0039.WordLists.English);
-                Items = new Quad[12];
+                Items = new LinkedValues[12];
                 for (int i = 0; i < Items.Length; i++)
                 {
-                    Items[i] = new Quad(11, allWords, 0);
+                    Items[i] = new LinkedValues(11, allWords, 0);
                 }
             }
         }
@@ -125,6 +125,6 @@ namespace HandyDandy.ViewModels
             }
         }
 
-        public Quad[] Items { get; private set; }
+        public LinkedValues[] Items { get; private set; }
     }
 }

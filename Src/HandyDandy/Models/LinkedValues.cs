@@ -9,11 +9,11 @@ using System.Diagnostics;
 
 namespace HandyDandy.Models
 {
-    public class Quad : InpcBase
+    public class LinkedValues : InpcBase
     {
-        public Quad() : this(2, new string[] { "Foo0", "Foo1", "Foo2", "Foo3" }, 1) { }
+        public LinkedValues() : this(2, new string[] { "Foo0", "Foo1", "Foo2", "Foo3" }, 1) { }
 
-        public Quad(int len)
+        public LinkedValues(int len)
         {
             Buttons = new Ternary[len];
             for (int i = 0; i < Buttons.Length; i++)
@@ -24,7 +24,7 @@ namespace HandyDandy.Models
             needWords = false;
         }
 
-        public Quad(int len, string[]? words, int disableCount)
+        public LinkedValues(int len, string[]? words, int disableCount)
         {
             Buttons = new Ternary[len];
             int i = 0;
