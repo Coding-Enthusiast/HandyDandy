@@ -38,7 +38,7 @@ namespace HandyDandy.Models
         public void ChangeState() => State = (State == TernaryState.One ? TernaryState.Zero : TernaryState.One);
 
         public void SetState(bool bit) => State = (bit ? TernaryState.One : TernaryState.Zero);
-#pragma warning restore IDE47
+#pragma warning restore IDE0047
         public void SetState(int bit) => SetState(bit == 1);
 
         public int ToBit() => State == TernaryState.One ? 1 : 0;
