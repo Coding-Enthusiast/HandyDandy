@@ -81,7 +81,7 @@ namespace HandyDandy.ViewModels
                 return SelectedInputType switch
                 {
                     InputType.BinaryGrid => new BinaryGridViewModel(len, SelectedOutputType),
-                    InputType.GroupedBinary => new GroupedBinaryViewModel(len, SelectedOutputType, SelectedMnemonicLength.Value),
+                    InputType.GroupedBinary => new GroupedBinaryViewModel(SelectedOutputType, SelectedMnemonicLength.Value),
                     _ => throw new NotImplementedException(),
                 };
             }

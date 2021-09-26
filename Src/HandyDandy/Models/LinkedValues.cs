@@ -4,6 +4,7 @@
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
 using HandyDandy.MVVM;
+using HandyDandy.Services;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -11,41 +12,19 @@ namespace HandyDandy.Models
 {
     public class LinkedValues : InpcBase
     {
-        public LinkedValues() : this(2, new string[] { "Foo0", "Foo1", "Foo2", "Foo3" }, 1) { }
+        public LinkedValues() : this(new TernaryStream(3, 1, null, false), new string[] { "Foo0", "Foo1", "Foo2", "Foo3" }, 1) { }
 
-        public LinkedValues(int len)
+        public LinkedValues(TernaryStream stream, string[]? words, int len)
         {
-            Buttons = new Ternary[len];
-            for (int i = 0; i < Buttons.Length; i++)
-            {
-                Buttons[i] = new Ternary(true);
-                Buttons[i].PropertyChanged += Button_PropertyChanged;
-            }
-            needWords = false;
-        }
-
-        public LinkedValues(int len, string[]? words, int disableCount)
-        {
-            Buttons = new Ternary[len];
-            int i = 0;
-            for (; i < Buttons.Length - disableCount; i++)
-            {
-                Buttons[i] = new Ternary(true);
-                Buttons[i].PropertyChanged += Button_PropertyChanged;
-            }
-            for (; i < Buttons.Length; i++)
-            {
-                Buttons[i] = new Ternary(false);
-                Buttons[i].PropertyChanged += Button_PropertyChanged;
-            }
-
             needWords = words is not null;
             allWords = words;
-            if (allWords is not null)
+            Buttons = stream.Next(len);
+            for (int i = 0; i < Buttons.Length; i++)
             {
-                _wrd = allWords[0];
+                Buttons[i].PropertyChanged += Button_PropertyChanged;
             }
         }
+
 
         private void Button_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {

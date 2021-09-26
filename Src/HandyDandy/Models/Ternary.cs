@@ -4,9 +4,11 @@
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
 using HandyDandy.MVVM;
+using System.Diagnostics;
 
 namespace HandyDandy.Models
 {
+    [DebuggerDisplay("State = {State}")]
     public class Ternary : InpcBase
     {
         public Ternary() : this(true)
@@ -32,11 +34,11 @@ namespace HandyDandy.Models
             get => _enabled;
             set => SetField(ref _enabled, value);
         }
+#pragma warning disable IDE0047
+        public void ChangeState() => State = (State == TernaryState.One ? TernaryState.Zero : TernaryState.One);
 
-        public void ChangeState() => State = State == TernaryState.One ? TernaryState.Zero : TernaryState.One;
-
-        public void SetState(bool bit) => State = bit ? TernaryState.One : TernaryState.Zero;
-
+        public void SetState(bool bit) => State = (bit ? TernaryState.One : TernaryState.Zero);
+#pragma warning restore IDE47
         public void SetState(int bit) => SetState(bit == 1);
 
         public int ToBit() => State == TernaryState.One ? 1 : 0;
