@@ -4,6 +4,7 @@
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
 using Autarkysoft.Bitcoin.Cryptography.Hashing;
+using System;
 
 namespace HandyDandy.Services
 {
@@ -17,9 +18,9 @@ namespace HandyDandy.Services
         private readonly int checksumSize;
         private readonly Sha256 sha = new();
 
-        public byte[] Compute(byte[] data)
+        public byte[] Compute(Span<byte> data)
         {
-            byte[] hash = sha.ComputeHash(data);
+            byte[] hash = sha.ComputeHash(data.ToArray());
             byte CS = (byte)(hash[0] >> (8 - checksumSize));
             byte[] res = new byte[checksumSize];
             for (int i = 0; i < checksumSize; i++)

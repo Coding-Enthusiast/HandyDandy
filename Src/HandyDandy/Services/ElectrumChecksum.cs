@@ -4,6 +4,7 @@
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
 using Autarkysoft.Bitcoin.Cryptography.Hashing;
+using System;
 using System.Text;
 
 namespace HandyDandy.Services
@@ -12,9 +13,9 @@ namespace HandyDandy.Services
     {
         private readonly HmacSha512 hmac = new();
 
-        public byte[] Compute(byte[] data)
+        public byte[] Compute(Span<byte> data)
         {
-            byte[] hash = hmac.ComputeHash(data, Encoding.UTF8.GetBytes("Seed version"));
+            byte[] hash = hmac.ComputeHash(data.ToArray(), Encoding.UTF8.GetBytes("Seed version"));
             
             return hash;
         }
