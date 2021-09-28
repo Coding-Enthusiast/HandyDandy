@@ -7,7 +7,7 @@ using HandyDandy.MVVM;
 
 namespace HandyDandy.ViewModels
 {
-    public class ViewModelBase : InpcBase
+    public abstract class ViewModelBase : InpcBase
     {
     }
 }

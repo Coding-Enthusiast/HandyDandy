@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         x:Class="HandyDandy.Views.MainWindow"
         Height="720"
-        Width="670"
+        Width="720"
         CanResize="False"
         Title="Handy-Dandy">
 
@@ -14,7 +14,7 @@
     <vm:MainWindowViewModel/>
   </Design.DataContext>
 
-  <Grid RowDefinitions="auto,auto">
+  <Grid RowDefinitions="auto,*,auto">
     <Grid ColumnDefinitions="*,*,*" Grid.Row="0">
       <ListBox Items="{Binding InputTypeList}"
                SelectedItem="{Binding SelectedInputType}"
@@ -40,6 +40,25 @@
     <ContentControl Content="{Binding Generator}"
                     Grid.Row="1"/>
 
+    <Grid ColumnDefinitions="*,100" RowDefinitions="auto,auto" Margin="5" Grid.Row="2">
+      <TextBox Text="{Binding Generator.Result}"
+               TextWrapping="Wrap"
+               IsReadOnly="True"
+               Height="100"
+               Grid.Column="0"
+               Grid.RowSpan="2"/>
+      <Button Content="Copy hex"
+              Command="{Binding CopyHex}"
+              IsEnabled="{Binding Generator.Stream.IsAllSet}"
+              Margin="3"
+              Grid.Column="1"
+              Grid.Row="0"/>
+      <Button Content="{Binding CopyButtonName}"
+              Command="{Binding CopyOutput}"
+              IsEnabled="{Binding Generator.Stream.IsAllSet}"
+              Margin="3"
+              Grid.Column="1"
+              Grid.Row="1"/>
+    </Grid>
   </Grid>
-
 </Window>

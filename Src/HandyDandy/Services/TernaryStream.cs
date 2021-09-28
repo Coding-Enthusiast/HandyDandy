@@ -43,6 +43,13 @@ namespace HandyDandy.Services
             set => SetField(ref _changed, value);
         }
 
+        private bool _allSet;
+        public bool IsAllSet
+        {
+            get => _allSet;
+            set => SetField(ref _allSet, value);
+        }
+
 
         private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -50,6 +57,7 @@ namespace HandyDandy.Services
 
             if (e.PropertyName != nameof(Ternary.State) || sender is not Ternary temp || !temp.IsEnabled || !dynamicCS)
             {
+                IsAllSet = Items.All(x => x.State != TernaryState.Unset);
                 return;
             }
 
@@ -59,6 +67,8 @@ namespace HandyDandy.Services
             {
                 Items[^(cs.Length - i)].SetState(cs[i]);
             }
+
+            IsAllSet = Items.All(x => x.State != TernaryState.Unset);
         }
 
         public byte[] ToBytes()

@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace HandyDandy.ViewModels
 {
-    public class GroupedBinaryViewModel : ViewModelBase
+    public class GroupedBinaryViewModel : GeneratorVM
     {
         public GroupedBinaryViewModel()
         {
@@ -22,6 +22,8 @@ namespace HandyDandy.ViewModels
         {
             if (ot == OutputType.PrivateKey)
             {
+                CollumnCount = 3;
+
                 Stream = new TernaryStream(256, 0, new WifChecksum(), false);
                 Items = new LinkedValues[32];
                 for (int i = 0; i < Items.Length; i++)
@@ -31,6 +33,8 @@ namespace HandyDandy.ViewModels
             }
             else if (ot == OutputType.Bip39Mnemonic)
             {
+                CollumnCount = 2;
+
                 string[] allWords = BIP0039.GetAllWords(BIP0039.WordLists.English);
                 int wordCount, entropySize, checksumSize;
                 if (mnLen == MnemonicLength.Twelve)
@@ -77,6 +81,8 @@ namespace HandyDandy.ViewModels
             }
             else if (ot == OutputType.ElectrumMnemonic)
             {
+                CollumnCount = 2;
+
                 string[] allWords = BIP0039.GetAllWords(BIP0039.WordLists.English);
                 Stream = new TernaryStream(132, 0, new ElectrumChecksum(), false);
                 Items = new LinkedValues[12];
@@ -85,10 +91,15 @@ namespace HandyDandy.ViewModels
                     Items[i] = new LinkedValues(Stream, allWords, 11);
                 }
             }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
 
+        public override TernaryStream Stream { get; }
+        public int CollumnCount { get; }
         public LinkedValues[] Items { get; private set; }
-        public TernaryStream Stream { get; private set; }
     }
 }
