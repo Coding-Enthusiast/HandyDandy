@@ -15,7 +15,7 @@ namespace HandyDandy.Services
 
         public byte[] Compute(Span<byte> data)
         {
-            byte[] hash = hmac.ComputeHash(data.ToArray(), Encoding.UTF8.GetBytes("Seed version"));
+            byte[] hash = hmac.ComputeHash(data, Encoding.UTF8.GetBytes("Seed version"));
             
             return hash;
         }

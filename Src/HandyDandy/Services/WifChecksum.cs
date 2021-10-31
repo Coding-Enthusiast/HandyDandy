@@ -14,7 +14,7 @@ namespace HandyDandy.Services
 
         public byte[] Compute(Span<byte> data)
         {
-            return hash.ComputeChecksum(data.ToArray());
+            return hash.ComputeChecksum(data);
         }
     }
 }
