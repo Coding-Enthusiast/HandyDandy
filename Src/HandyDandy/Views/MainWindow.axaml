@@ -14,7 +14,7 @@
     <vm:MainWindowViewModel/>
   </Design.DataContext>
 
-  <Grid RowDefinitions="auto,*,auto">
+  <Grid RowDefinitions="auto,auto,*,auto">
     <Grid ColumnDefinitions="*,*,*" Grid.Row="0">
       <ListBox Items="{Binding InputTypeList}"
                SelectedItem="{Binding SelectedInputType}"
@@ -37,10 +37,18 @@
       </ComboBox>
     </Grid>
 
-    <ContentControl Content="{Binding Generator}"
-                    Grid.Row="1"/>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1">
+      <TextBlock Text="{Binding Generator.Stream.SetBitCount}"
+                 ToolTip.Tip="Number of bits set"/>
+      <TextBlock Text="/"/>
+      <TextBlock Text="{Binding Generator.Stream.Size}"
+                 ToolTip.Tip="Binary size"/>
+    </StackPanel>
 
-    <Grid ColumnDefinitions="*,100" RowDefinitions="auto,auto" Margin="5" Grid.Row="2">
+    <ContentControl Content="{Binding Generator}"
+                    Grid.Row="2"/>
+
+    <Grid ColumnDefinitions="*,100" RowDefinitions="auto,auto" Margin="5" Grid.Row="3">
       <TextBox Text="{Binding Generator.Result}"
                TextWrapping="Wrap"
                IsReadOnly="True"

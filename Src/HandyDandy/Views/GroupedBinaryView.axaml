@@ -10,15 +10,7 @@
     <vm:GroupedBinaryViewModel/>
   </Design.DataContext>
 
-  <Grid RowDefinitions="auto,*">
-    <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Center">
-      <TextBlock Text="{Binding Stream.SetBitCount}"
-                 ToolTip.Tip="Number of bits set"/>
-      <TextBlock Text="/"/>
-      <TextBlock Text="{Binding Stream.Size}"
-                 ToolTip.Tip="Binary size"/>
-    </StackPanel>
-    
+  <Grid>
     <ItemsControl Items="{Binding Items}" Grid.Row="1">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
