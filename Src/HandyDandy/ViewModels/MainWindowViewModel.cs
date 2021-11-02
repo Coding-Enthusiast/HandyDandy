@@ -20,10 +20,10 @@ namespace HandyDandy.ViewModels
         public MainWindowViewModel()
         {
             InputTypeList = EnumHelper.GetAllEnumValues<InputType>().ToArray();
-            SelectedInputType = InputTypeList[0];
+            _selIn = InputTypeList[0];
 
             OutputTypeList = EnumHelper.GetAllEnumValues<OutputType>().ToArray();
-            SelectedOutputType = OutputTypeList[0];
+            _selOut = OutputTypeList[0];
 
             MnemonicLengthList = EnumHelper.GetDescriptiveEnums<MnemonicLength>().ToArray();
             _selMnLen = MnemonicLengthList.First();
