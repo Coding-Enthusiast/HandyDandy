@@ -24,7 +24,7 @@ namespace HandyDandy.ViewModels
             {
                 CollumnCount = 3;
 
-                Stream = new TernaryStream(256, 0, new WifChecksum(), false);
+                Stream = new TernaryStream(256, 0, new WifChecksum(), false, ot);
                 Items = new LinkedValues[32];
                 for (int i = 0; i < Items.Length; i++)
                 {
@@ -72,7 +72,7 @@ namespace HandyDandy.ViewModels
                     throw new NotImplementedException();
                 }
 
-                Stream = new TernaryStream(entropySize + checksumSize, checksumSize, new Bip39Checksum(checksumSize), true);
+                Stream = new TernaryStream(entropySize + checksumSize, checksumSize, new Bip39Checksum(checksumSize), true, ot);
                 Items = new LinkedValues[wordCount];
                 for (int i = 0; i < Items.Length; i++)
                 {
@@ -84,7 +84,7 @@ namespace HandyDandy.ViewModels
                 CollumnCount = 2;
 
                 string[] allWords = BIP0039.GetAllWords(BIP0039.WordLists.English);
-                Stream = new TernaryStream(132, 0, new ElectrumChecksum(), false);
+                Stream = new TernaryStream(132, 0, new ElectrumChecksum(), false, ot);
                 Items = new LinkedValues[12];
                 for (int i = 0; i < Items.Length; i++)
                 {

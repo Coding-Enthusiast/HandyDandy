@@ -20,8 +20,7 @@ namespace HandyDandy.ViewModels
             if (len <= 0 || len % 8 != 0)
                 throw new ArgumentException("Bit length must be divisible by 8.", nameof(len));
 
-            Stream = new TernaryStream(len, 0, null, false);
-            Stream.PropertyChanged += Stream_PropertyChanged;
+            Stream = new TernaryStream(len, 0, null, false, ot);
             Buttons = Stream.Next(len);
         }
 

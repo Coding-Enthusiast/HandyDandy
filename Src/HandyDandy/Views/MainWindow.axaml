@@ -49,7 +49,7 @@
                     Grid.Row="2"/>
 
     <Grid ColumnDefinitions="*,100" RowDefinitions="auto,auto" Margin="5" Grid.Row="3">
-      <TextBox Text="{Binding Generator.Result}"
+      <TextBox Text="{Binding Generator.Stream.Result}"
                TextWrapping="Wrap"
                IsReadOnly="True"
                Height="100"

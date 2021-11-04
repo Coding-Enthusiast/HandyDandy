@@ -3,6 +3,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
+using Autarkysoft.Bitcoin.Cryptography.Asymmetric.KeyPairs;
+using Autarkysoft.Bitcoin.ImprovementProposals;
 using HandyDandy.Models;
 using HandyDandy.MVVM;
 using System;
@@ -13,9 +15,10 @@ namespace HandyDandy.Services
 {
     public class TernaryStream : InpcBase
     {
-        public TernaryStream(int binarySize, int disabledCount, IChecksum cs, bool dynamicChecksum)
+        public TernaryStream(int binarySize, int disabledCount, IChecksum cs, bool dynamicChecksum, OutputType ot)
         {
             DataSize = (binarySize - disabledCount) / 8;
+            outputType = ot;
             checksum = cs;
             dynamicCS = dynamicChecksum;
             Items = new Ternary[binarySize];
@@ -29,6 +32,7 @@ namespace HandyDandy.Services
         }
 
 
+        private readonly OutputType outputType;
         private readonly IChecksum checksum;
         private int position;
         private readonly bool dynamicCS;
@@ -69,6 +73,68 @@ namespace HandyDandy.Services
             }
 
             IsAllSet = Items.All(x => x.State != TernaryState.Unset);
+        }
+
+        [DependsOnProperty(nameof(IsAllSet))]
+        public string Result
+        {
+            get
+            {
+                if (!IsAllSet)
+                {
+                    return "Not all bits are set. The result is still weak and can not be copied.";
+                }
+
+                byte[] bytes = ToBytes();
+                if (outputType == OutputType.PrivateKey)
+                {
+                    try
+                    {
+                        using PrivateKey temp = new(bytes);
+                        return temp.ToWif(true);
+                    }
+                    catch (ArgumentOutOfRangeException ex)
+                    {
+                        return $"The current bit stream is creating an out of range key.{Environment.NewLine}" +
+                               $"{ex.Message}";
+                    }
+                    catch (Exception ex)
+                    {
+                        return $"An error occurred while converting the bit stream to a private key.{Environment.NewLine}" +
+                               $"Error message: {ex.Message}";
+                    }
+                }
+                else if (outputType == OutputType.Bip39Mnemonic)
+                {
+                    try
+                    {
+                        using BIP0039 temp = new(bytes);
+                        return temp.ToMnemonic();
+                    }
+                    catch (Exception ex)
+                    {
+                        return $"An error occurred while converting the bit stream to a BIP-39 mnemonic.{Environment.NewLine}" +
+                               $"Error message: {ex.Message}";
+                    }
+                }
+                else if (outputType == OutputType.ElectrumMnemonic)
+                {
+                    try
+                    {
+                        using ElectrumMnemonic temp = new(bytes, ElectrumMnemonic.MnemonicType.SegWit);
+                        return temp.ToMnemonic();
+                    }
+                    catch (Exception ex)
+                    {
+                        return $"An error occurred while converting the bit stream to an Electrum mnemonic.{Environment.NewLine}" +
+                               $"Error message: {ex.Message}";
+                    }
+                }
+                else
+                {
+                    return "Undefined.";
+                }
+            }
         }
 
         public byte[] ToBytes()
