@@ -33,6 +33,20 @@ namespace HandyDandy.ViewModels
         }
 
 
+        public bool IsDebug =>
+#if DEBUG
+            true;
+#else
+            false;
+#endif
+
+        public void Fill()
+        {
+            for (int i = 0; i < Generator.Stream.Items.Length - 2; i++)
+            {
+                Generator.Stream.Items[i].SetState(1);
+            }
+        }
 
         public InputType[] InputTypeList { get; }
 

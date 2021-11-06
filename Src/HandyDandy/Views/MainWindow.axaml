@@ -43,6 +43,10 @@
       <TextBlock Text="/"/>
       <TextBlock Text="{Binding Generator.Stream.Size}"
                  ToolTip.Tip="Binary size"/>
+      <Button Content="Fill (for debugging)" 
+              Command="{Binding Fill}"
+              IsVisible="{Binding IsDebug}"
+              Margin="30,0,0,0"/>
     </StackPanel>
 
     <ContentControl Content="{Binding Generator}"
