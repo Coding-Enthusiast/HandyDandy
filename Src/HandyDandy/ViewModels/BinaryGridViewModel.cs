@@ -11,16 +11,30 @@ namespace HandyDandy.ViewModels
 {
     public class BinaryGridViewModel : GeneratorVM
     {
-        public BinaryGridViewModel() : this(8, OutputType.PrivateKey)
+        public BinaryGridViewModel() : this(OutputType.Bip39Mnemonic, MnemonicLength.Twelve)
         {
         }
 
-        public BinaryGridViewModel(int len, OutputType ot)
+        public BinaryGridViewModel(OutputType ot, MnemonicLength mnLen)
         {
-            if (len <= 0 || len % 8 != 0)
-                throw new ArgumentException("Bit length must be divisible by 8.", nameof(len));
+            int len = ot switch
+            {
+                OutputType.PrivateKey => 256,
+                OutputType.Bip39Mnemonic => mnLen switch
+                {
+                    MnemonicLength.Twelve => 128,
+                    MnemonicLength.Fifteen => 160,
+                    MnemonicLength.Eighteen => 192,
+                    MnemonicLength.TwentyOne => 224,
+                    MnemonicLength.TwentyFour => 256,
+                    _ => throw new NotImplementedException(),
+                },
+                // We only support the default 12-word Electrum mnemonics
+                OutputType.ElectrumMnemonic => 136,
+                _ => throw new NotImplementedException(),
+            };
 
-            Stream = new TernaryStream(len, 0, null, false, ot);
+            Stream = new TernaryStream(len, ot);
             Buttons = Stream.Next(len);
         }
 

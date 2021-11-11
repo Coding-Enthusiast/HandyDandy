@@ -33,7 +33,7 @@ namespace HandyDandy.ViewModels
         }
 
 
-        public bool IsDebug =>
+        public static bool IsDebug =>
 #if DEBUG
             true;
 #else
@@ -42,7 +42,7 @@ namespace HandyDandy.ViewModels
 
         public void Fill()
         {
-            for (int i = 0; i < Generator.Stream.Items.Length - 2; i++)
+            for (int i = 2; i < Generator.Stream.Items.Length; i++)
             {
                 Generator.Stream.Items[i].SetState(1);
             }
@@ -99,26 +99,9 @@ namespace HandyDandy.ViewModels
 
         private void BuildNewGenerator()
         {
-            int len = SelectedOutputType switch
-            {
-                OutputType.PrivateKey => 256,
-                OutputType.Bip39Mnemonic => SelectedMnemonicLength.Value switch
-                {
-                    MnemonicLength.Twelve => 128,
-                    MnemonicLength.Fifteen => 160,
-                    MnemonicLength.Eighteen => 192,
-                    MnemonicLength.TwentyOne => 224,
-                    MnemonicLength.TwentyFour => 256,
-                    _ => throw new NotImplementedException(),
-                },
-                // We only support the default 12-word Electrum mnemonics
-                OutputType.ElectrumMnemonic => 136,
-                _ => throw new NotImplementedException(),
-            };
-
             Generator = SelectedInputType switch
             {
-                InputType.BinaryGrid => new BinaryGridViewModel(len, SelectedOutputType),
+                InputType.BinaryGrid => new BinaryGridViewModel(SelectedOutputType, SelectedMnemonicLength.Value),
                 InputType.GroupedBinary => new GroupedBinaryViewModel(SelectedOutputType, SelectedMnemonicLength.Value),
                 _ => throw new NotImplementedException(),
             };

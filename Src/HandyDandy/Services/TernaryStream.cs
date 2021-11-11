@@ -15,6 +15,10 @@ namespace HandyDandy.Services
 {
     public class TernaryStream : InpcBase
     {
+        public TernaryStream(int binarySize, OutputType ot) : this(binarySize, 0, null, false, ot)
+        {
+        }
+
         public TernaryStream(int binarySize, int disabledCount, IChecksum cs, bool dynamicChecksum, OutputType ot)
         {
             DataSize = (binarySize - disabledCount) / 8;
@@ -66,7 +70,7 @@ namespace HandyDandy.Services
                 SetResult(ba);
                 return;
             }
-            
+
             byte[] cs = checksum.Compute(ba.Slice(0, DataSize));
             for (int i = 0; i < cs.Length; i++)
             {
@@ -135,7 +139,7 @@ namespace HandyDandy.Services
             }
         }
 
-        private string _res;
+        private string _res = string.Empty;
         public string Result
         {
             get => _res;
