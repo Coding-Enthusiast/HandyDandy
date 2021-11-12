@@ -148,8 +148,9 @@ namespace HandyDandy.Services
 
         public byte[] ToBytes()
         {
-            byte[] ba = new byte[Items.Length / 8];
-            for (int i = 0, j = 0; i < ba.Length; i++, j += 8)
+            int x = (outputType == OutputType.ElectrumMnemonic && Items.Length % 8 == 4) ? 1 : 0;
+            byte[] ba = new byte[Items.Length / 8 + x];
+            for (int i = 0, j = 0; i < ba.Length - x; i++, j += 8)
             {
                 ba[i] = (byte)(Items[j].ToBit() << 7 |
                                Items[j + 1].ToBit() << 6 |
@@ -159,6 +160,13 @@ namespace HandyDandy.Services
                                Items[j + 5].ToBit() << 2 |
                                Items[j + 6].ToBit() << 1 |
                                Items[j + 7].ToBit() << 0);
+            }
+            if (x != 0)
+            {
+                ba[^1] = (byte)(Items[128].ToBit() << 7 |
+                                Items[129].ToBit() << 6 |
+                                Items[130].ToBit() << 5 |
+                                Items[131].ToBit() << 4);
             }
             return ba;
         }
