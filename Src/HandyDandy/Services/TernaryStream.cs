@@ -9,6 +9,7 @@ using HandyDandy.Models;
 using HandyDandy.MVVM;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace HandyDandy.Services
@@ -124,7 +125,8 @@ namespace HandyDandy.Services
             {
                 try
                 {
-                    using ElectrumMnemonic temp = new(bytes.ToArray(), ElectrumMnemonic.MnemonicType.SegWit);
+                    string mn = GetElectrumMnemonic();
+                    using ElectrumMnemonic temp = new(mn);
                     Result = temp.ToMnemonic();
                 }
                 catch (Exception ex)
@@ -139,6 +141,59 @@ namespace HandyDandy.Services
             }
         }
 
+        private string GetElectrumMnemonic()
+        {
+            Debug.Assert(Items.Length == 132);
+            int[] wordIndexes = new int[12];
+            for (int i = 0, j = 0; i < wordIndexes.Length; i++, j += 11)
+            {
+                wordIndexes[i] = Items[j].ToBit() << 10 |
+                                 Items[j + 1].ToBit() << 9 |
+                                 Items[j + 2].ToBit() << 8 |
+                                 Items[j + 3].ToBit() << 7 |
+                                 Items[j + 4].ToBit() << 6 |
+                                 Items[j + 5].ToBit() << 5 |
+                                 Items[j + 6].ToBit() << 4 |
+                                 Items[j + 7].ToBit() << 3 |
+                                 Items[j + 8].ToBit() << 2 |
+                                 Items[j + 9].ToBit() << 1 |
+                                 Items[j + 10].ToBit();
+            }
+
+
+            string[] allWords = ElectrumMnemonic.GetAllWords(BIP0039.WordLists.English);
+            string res = string.Empty;
+            while (true)
+            {
+                try
+                {
+                    string[] words = wordIndexes.Select(x => allWords[x]).ToArray();
+                    res = string.Join(' ', words);
+                    var temp = new ElectrumMnemonic(res);
+                    if (temp.MnType == ElectrumMnemonic.MnemonicType.SegWit)
+                    {
+                        break;
+                    }
+                }
+                catch { }
+
+                for (int i = 0; i < wordIndexes.Length; i++)
+                {
+                    wordIndexes[i]++;
+                    if (wordIndexes[i] == 2048)
+                    {
+                        wordIndexes[i] = 0;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return res;
+        }
+
         private string _res = string.Empty;
         public string Result
         {
@@ -148,9 +203,8 @@ namespace HandyDandy.Services
 
         public byte[] ToBytes()
         {
-            int x = (outputType == OutputType.ElectrumMnemonic && Items.Length % 8 == 4) ? 1 : 0;
-            byte[] ba = new byte[Items.Length / 8 + x];
-            for (int i = 0, j = 0; i < ba.Length - x; i++, j += 8)
+            byte[] ba = new byte[Items.Length / 8];
+            for (int i = 0, j = 0; i < ba.Length; i++, j += 8)
             {
                 ba[i] = (byte)(Items[j].ToBit() << 7 |
                                Items[j + 1].ToBit() << 6 |
@@ -160,13 +214,6 @@ namespace HandyDandy.Services
                                Items[j + 5].ToBit() << 2 |
                                Items[j + 6].ToBit() << 1 |
                                Items[j + 7].ToBit() << 0);
-            }
-            if (x != 0)
-            {
-                ba[^1] = (byte)(Items[128].ToBit() << 7 |
-                                Items[129].ToBit() << 6 |
-                                Items[130].ToBit() << 5 |
-                                Items[131].ToBit() << 4);
             }
             return ba;
         }
