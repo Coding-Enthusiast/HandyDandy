@@ -19,6 +19,8 @@ namespace HandyDandy.Models
 
         public LinkedValues(TernaryStream stream, string[]? words, int len)
         {
+            format = len == 8 ? "x2" : "x4";
+            _hex = 0.ToString(format);
             needWords = words is not null;
             allWords = words;
             Buttons = stream.Next(len);
@@ -39,7 +41,7 @@ namespace HandyDandy.Models
             }
 
             Value = result;
-            Hex = Value.ToString("x4");
+            Hex = $"0x{Value.ToString(format)}";
             if (needWords)
             {
                 Debug.Assert(allWords is not null);
@@ -49,12 +51,13 @@ namespace HandyDandy.Models
             }
         }
 
+        private readonly string format;
         private readonly bool needWords;
         private readonly string[]? allWords;
 
         public Ternary[] Buttons { get; private set; }
 
-        private string _hex = "0000";
+        private string _hex;
         public string Hex
         {
             get => _hex;
