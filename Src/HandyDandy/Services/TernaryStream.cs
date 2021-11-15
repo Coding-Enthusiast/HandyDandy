@@ -203,7 +203,7 @@ namespace HandyDandy.Services
 
         public byte[] ToBytes()
         {
-            byte[] ba = new byte[Items.Length / 8];
+            byte[] ba = new byte[DataSize];
             for (int i = 0, j = 0; i < ba.Length; i++, j += 8)
             {
                 ba[i] = (byte)(Items[j].ToBit() << 7 |
