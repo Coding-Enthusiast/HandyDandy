@@ -30,8 +30,8 @@
       <Setter Property="Background" Value="{Binding State, Converter={StaticResource stateToColorConv}, Mode=OneWay}"/>
       <Setter Property="IsEnabled" Value="{Binding IsEnabled}"/>
       <Setter Property="Margin" Value="1"/>
-      <Setter Property="Height" Value="25"/>
-      <Setter Property="Width" Value="25"/>
+      <Setter Property="Height" Value="27"/>
+      <Setter Property="Width" Value="27"/>
     </Style>
 
     <!--Use Classes="DescriptiveItem" in any ComboBox to represent its items as DescriptiveItem-->

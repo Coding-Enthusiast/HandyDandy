@@ -5,8 +5,9 @@
         xmlns:vm="clr-namespace:HandyDandy.ViewModels;assembly=HandyDandy"
         mc:Ignorable="d"
         x:Class="HandyDandy.Views.MainWindow"
-        Height="720"
-        Width="720"
+        FontSize="14"
+        Height="780"
+        Width="780"
         CanResize="False"
         Title="Handy-Dandy">
 
