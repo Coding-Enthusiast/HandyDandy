@@ -9,7 +9,7 @@
         Height="780"
         Width="780"
         CanResize="False"
-        Title="Handy-Dandy">
+        Title="{Binding Title}">
 
   <Design.DataContext>
     <vm:MainWindowViewModel/>

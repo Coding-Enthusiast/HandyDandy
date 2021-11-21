@@ -12,6 +12,7 @@ using HandyDandy.MVVM;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace HandyDandy.ViewModels
 {
@@ -45,6 +46,15 @@ namespace HandyDandy.ViewModels
             for (int i = 2; i < Generator.Stream.Items.Length; i++)
             {
                 Generator.Stream.Items[i].SetState(1);
+            }
+        }
+
+        public static string Title
+        {
+            get
+            {
+                Version? ver = Assembly.GetExecutingAssembly().GetName().Version;
+                return $"Handy Dandy {ver?.ToString(4)} {(ver?.Major == 0 ? "(beta)" : "")}";
             }
         }
 
