@@ -16,16 +16,16 @@ namespace HandyDandy.Services
 {
     public class TernaryStream : InpcBase
     {
-        public TernaryStream(int binarySize, OutputType ot) : this(binarySize, 0, null, false, ot)
+        public TernaryStream(int binarySize, OutputType ot) : this(binarySize, 0, null, ot)
         {
         }
 
-        public TernaryStream(int binarySize, int disabledCount, IChecksum cs, bool dynamicChecksum, OutputType ot)
+        public TernaryStream(int binarySize, int disabledCount, IChecksum? cs, OutputType ot)
         {
+            BitSize = binarySize - disabledCount;
             DataSize = (binarySize - disabledCount) / 8;
             outputType = ot;
             checksum = cs;
-            dynamicCS = dynamicChecksum;
             Items = new Ternary[binarySize];
 
             for (int i = 0; i < binarySize; i++)
@@ -38,12 +38,12 @@ namespace HandyDandy.Services
 
 
         private readonly OutputType outputType;
-        private readonly IChecksum checksum;
+        private readonly IChecksum? checksum;
         private int position;
-        private readonly bool dynamicCS;
 
         public Ternary[] Items { get; }
-        public int Size => Items.Length;
+        public int TotalSize => Items.Length;
+        public int BitSize { get; }
         public int DataSize { get; }
 
         private int _changed;
@@ -64,22 +64,7 @@ namespace HandyDandy.Services
         private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             SetBitCount = Items.Count(x => x.State != TernaryState.Unset);
-            Span<byte> ba = ToBytes();
-            if (e.PropertyName != nameof(Ternary.State) || sender is not Ternary temp || !temp.IsEnabled || !dynamicCS)
-            {
-                IsAllSet = Items.All(x => x.State != TernaryState.Unset);
-                SetResult(ba);
-                return;
-            }
-
-            byte[] cs = checksum.Compute(ba.Slice(0, DataSize));
-            for (int i = 0; i < cs.Length; i++)
-            {
-                Items[^(cs.Length - i)].SetState(cs[i]);
-            }
-
             IsAllSet = Items.All(x => x.State != TernaryState.Unset);
-            SetResult(ba);
         }
 
         private void SetResult(ReadOnlySpan<byte> bytes)
