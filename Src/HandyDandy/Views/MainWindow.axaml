@@ -42,36 +42,46 @@
       <TextBlock Text="{Binding Generator.Stream.SetBitCount}"
                  ToolTip.Tip="Number of bits set"/>
       <TextBlock Text="/"/>
-      <TextBlock Text="{Binding Generator.Stream.Size}"
+      <TextBlock Text="{Binding Generator.Stream.TotalSize}"
                  ToolTip.Tip="Binary size"/>
-      <Button Content="Fill (for debugging)" 
+      <Button Content="Fill all with 0" 
               Command="{Binding Fill}"
-              IsVisible="{Binding IsDebug}"
+              CommandParameter="False"
+              Margin="30,0,0,0"/>
+      <Button Content="Fill all with 1"
+              Command="{Binding Fill}"
+              CommandParameter="True"
               Margin="30,0,0,0"/>
     </StackPanel>
 
     <ContentControl Content="{Binding Generator}"
                     Grid.Row="2"/>
 
-    <Grid ColumnDefinitions="*,100" RowDefinitions="auto,auto" Margin="5" Grid.Row="3">
+    <Grid ColumnDefinitions="*,100" RowDefinitions="auto,auto,auto" Margin="5" Grid.Row="3">
       <TextBox Text="{Binding Generator.Stream.Result}"
                TextWrapping="Wrap"
                IsReadOnly="True"
-               Height="100"
+               Height="120"
                Grid.Column="0"
-               Grid.RowSpan="2"/>
-      <Button Content="Copy hex"
-              Command="{Binding CopyHex}"
+               Grid.RowSpan="3"/>
+      <Button Content="Finilize"
+              Command="{Binding Finilize}"
               IsEnabled="{Binding Generator.Stream.IsAllSet}"
               Margin="3"
               Grid.Column="1"
               Grid.Row="0"/>
-      <Button Content="{Binding CopyButtonName}"
-              Command="{Binding CopyOutput}"
-              IsEnabled="{Binding Generator.Stream.IsAllSet}"
+      <Button Content="Copy hex"
+              Command="{Binding CopyHex}"
+              IsEnabled="{Binding IsCopyReady}"
               Margin="3"
               Grid.Column="1"
               Grid.Row="1"/>
+      <Button Content="{Binding CopyButtonName}"
+              Command="{Binding CopyOutput}"
+              IsEnabled="{Binding IsCopyReady}"
+              Margin="3"
+              Grid.Column="1"
+              Grid.Row="2"/>
     </Grid>
   </Grid>
 </Window>

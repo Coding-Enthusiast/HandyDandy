@@ -41,11 +41,11 @@ namespace HandyDandy.ViewModels
             false;
 #endif
 
-        public void Fill()
+        public void Fill(bool b)
         {
-            for (int i = 2; i < Generator.Stream.Items.Length; i++)
+            for (int i = 0; i < Generator.Stream.BitSize; i++)
             {
-                Generator.Stream.Items[i].SetState(1);
+                Generator.Stream.Items[i].SetState(b);
             }
         }
 
@@ -124,6 +124,13 @@ namespace HandyDandy.ViewModels
             set => SetField(ref _generator, value);
         }
 
+        private bool _isCopy;
+        public bool IsCopyReady
+        {
+            get => _isCopy;
+            set => SetField(ref _isCopy, value);
+        }
+
 
 
         [DependsOnProperty(nameof(SelectedOutputType))]
@@ -171,6 +178,11 @@ namespace HandyDandy.ViewModels
             {
                 Application.Current.Clipboard.ClearAsync();
             }
+        }
+
+        public void Finilize()
+        {
+            // TODO: get stream bytes, check in range, set checksum, set IsCopyReady
         }
     }
 }
