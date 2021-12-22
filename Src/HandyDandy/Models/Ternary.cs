@@ -34,7 +34,7 @@ namespace HandyDandy.Models
             get => _enabled;
             set => SetField(ref _enabled, value);
         }
-#pragma warning disable IDE0047
+#pragma warning disable IDE0047 // Remove unnecessary parentheses
         public void ChangeState() => State = (State == TernaryState.One ? TernaryState.Zero : TernaryState.One);
 
         public void SetState(bool bit) => State = (bit ? TernaryState.One : TernaryState.Zero);
