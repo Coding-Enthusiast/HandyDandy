@@ -22,8 +22,8 @@ namespace HandyDandy.Services
 
         public TernaryStream(int binarySize, int disabledCount, IChecksum? cs, OutputType ot)
         {
-            BitSize = binarySize - disabledCount;
-            DataSize = (binarySize - disabledCount) / 8;
+            DataBitSize = binarySize - disabledCount;
+            DataByteSize = (binarySize - disabledCount) / 8;
             outputType = ot;
             checksum = cs;
             Items = new Ternary[binarySize];
@@ -39,12 +39,12 @@ namespace HandyDandy.Services
 
         private readonly OutputType outputType;
         private readonly IChecksum? checksum;
-        private int position;
+        private int readPosition, setPosition;
 
         public Ternary[] Items { get; }
-        public int TotalSize => Items.Length;
-        public int BitSize { get; }
-        public int DataSize { get; }
+        public int TotalBitSize => Items.Length;
+        public int DataBitSize { get; }
+        public int DataByteSize { get; }
 
         private int _changed;
         public int SetBitCount
@@ -188,7 +188,7 @@ namespace HandyDandy.Services
 
         public byte[] ToBytes()
         {
-            byte[] ba = new byte[DataSize];
+            byte[] ba = new byte[DataByteSize];
             for (int i = 0, j = 0; i < ba.Length; i++, j += 8)
             {
                 ba[i] = (byte)(Items[j].ToBit() << 7 |
@@ -208,10 +208,16 @@ namespace HandyDandy.Services
             Ternary[] result = new Ternary[count];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = Items[i + position];
+                result[i] = Items[i + readPosition];
             }
-            position += count;
+            readPosition += count;
             return result;
+        }
+
+        public bool SetNext(bool b)
+        {
+            Items[setPosition].SetState(b);
+            return setPosition == Items.Length;
         }
     }
 }

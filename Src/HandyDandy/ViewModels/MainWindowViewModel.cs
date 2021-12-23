@@ -43,7 +43,7 @@ namespace HandyDandy.ViewModels
 
         public void Fill(bool b)
         {
-            for (int i = 0; i < Generator.Stream.BitSize; i++)
+            for (int i = 0; i < Generator.Stream.DataBitSize; i++)
             {
                 Generator.Stream.Items[i].SetState(b);
             }
