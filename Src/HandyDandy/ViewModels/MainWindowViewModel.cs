@@ -113,6 +113,7 @@ namespace HandyDandy.ViewModels
             {
                 InputType.BinaryGrid => new BinaryGridViewModel(SelectedOutputType, SelectedMnemonicLength.Value),
                 InputType.GroupedBinary => new GroupedBinaryViewModel(SelectedOutputType, SelectedMnemonicLength.Value),
+                InputType.Keyboard => new WithKeyboardViewModel(SelectedOutputType, SelectedMnemonicLength.Value),
                 _ => throw new NotImplementedException(),
             };
         }

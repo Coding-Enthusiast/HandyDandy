@@ -11,6 +11,7 @@ namespace HandyDandy.Models
     {
         BinaryGrid,
         GroupedBinary,
+        Keyboard
     }
 
     public enum OutputType
