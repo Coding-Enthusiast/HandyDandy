@@ -216,7 +216,7 @@ namespace HandyDandy.Services
 
         public bool SetNext(bool b)
         {
-            Items[setPosition].SetState(b);
+            Items[setPosition++].SetState(b);
             return setPosition == Items.Length;
         }
     }
