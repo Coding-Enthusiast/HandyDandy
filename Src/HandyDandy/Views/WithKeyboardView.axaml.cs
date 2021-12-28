@@ -23,14 +23,17 @@ namespace HandyDandy.Views
             var ctx = DataContext as WithKeyboardViewModel;
             if (ctx is not null)
             {
-                if (e.Key == Key.D0 || e.Key == Key.NumPad0 || e.Key == Key.Space || e.Key == Key.Escape)
+                if (ctx.CanSetNext)
                 {
-                    ctx.SetNextBit(false);
+                    if (e.Key == Key.D0 || e.Key == Key.NumPad0 || e.Key == Key.Space || e.Key == Key.Escape)
+                    {
+                        ctx.SetNextBit(false);
+                    }
+                    else
+                    {
+                        ctx.SetNextBit(true);
+                    }
                 }
-                else
-                {
-                    ctx.SetNextBit(true);
-                } 
             }
         }
 

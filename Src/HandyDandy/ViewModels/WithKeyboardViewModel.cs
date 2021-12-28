@@ -101,14 +101,19 @@ namespace HandyDandy.ViewModels
         public int CollumnCount { get; }
         public LinkedValues[] Items { get; private set; }
 
-        public void OnKeyPressed()
+        private bool _canSetNext = true;
+        public bool CanSetNext
         {
-            Stream.SetNext(true);
+            get => _canSetNext;
+            set => SetField(ref _canSetNext, value);
         }
 
         public void SetNextBit(bool b)
         {
-            Stream.SetNext(b);
+            if (CanSetNext)
+            {
+                CanSetNext = !Stream.SetNext(b);
+            }
         }
     }
 }
