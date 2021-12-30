@@ -36,6 +36,79 @@ namespace HandyDandy.Services
             }
         }
 
+        public TernaryStream(OutputType ot, MnemonicLength mnLen = MnemonicLength.Twelve)
+        {
+            outputType = ot;
+            int disabledCount = 0;
+            if (ot == OutputType.PrivateKey)
+            {
+                DataBitSize = 256;
+                DataByteSize = 32;
+                disabledCount = 0;
+                checksum = new WifChecksum();
+            }
+            else if (ot == OutputType.Bip39Mnemonic)
+            {
+                if (mnLen == MnemonicLength.Twelve)
+                {
+                    DataBitSize = 128;
+                    DataByteSize = 16;
+                    disabledCount = 4;
+                }
+                else if (mnLen == MnemonicLength.Fifteen)
+                {
+                    DataBitSize = 160;
+                    DataByteSize = 20;
+                    disabledCount = 5;
+                }
+                else if (mnLen == MnemonicLength.Eighteen)
+                {
+                    DataBitSize = 192;
+                    DataByteSize = 24;
+                    disabledCount = 6;
+                }
+                else if (mnLen == MnemonicLength.TwentyOne)
+                {
+                    DataBitSize = 224;
+                    DataByteSize = 28;
+                    disabledCount = 7;
+                }
+                else if (mnLen == MnemonicLength.TwentyFour)
+                {
+                    DataBitSize = 256;
+                    DataByteSize = 32;
+                    disabledCount = 8;
+                }
+                else
+                {
+                    throw new ArgumentException("Mnemonic length is not defined.");
+                }
+
+                checksum = new Bip39Checksum(disabledCount);
+            }
+            else if (ot == OutputType.ElectrumMnemonic)
+            {
+                DataBitSize = 132;
+                DataByteSize = 16;
+                disabledCount = 0;
+
+                checksum = new ElectrumChecksum();
+            }
+            else
+            {
+                throw new ArgumentException("Output type is not defined.");
+            }
+
+            Items = new Ternary[DataBitSize + disabledCount];
+
+            for (int i = 0; i < Items.Length; i++)
+            {
+                bool isDisabled = i < DataBitSize;
+                Items[i] = new Ternary(isDisabled);
+                Items[i].PropertyChanged += Item_PropertyChanged;
+            }
+        }
+
 
         private readonly OutputType outputType;
         private readonly IChecksum? checksum;
