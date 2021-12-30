@@ -42,7 +42,7 @@
       <TextBlock Text="{Binding Generator.Stream.SetBitCount}"
                  ToolTip.Tip="Number of bits set"/>
       <TextBlock Text="/"/>
-      <TextBlock Text="{Binding Generator.Stream.TotalSize}"
+      <TextBlock Text="{Binding Generator.Stream.TotalBitSize}"
                  ToolTip.Tip="Binary size"/>
       <Button Content="Fill all with 0" 
               Command="{Binding Fill}"
