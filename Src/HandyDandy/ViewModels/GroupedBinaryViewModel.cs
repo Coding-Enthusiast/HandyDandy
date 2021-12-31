@@ -20,80 +20,45 @@ namespace HandyDandy.ViewModels
 
         public GroupedBinaryViewModel(OutputType ot, MnemonicLength mnLen)
         {
+            Stream = new TernaryStream(ot, mnLen);
+            int itemCount, chunkSize;
+            string[]? allWords = BIP0039.GetAllWords(BIP0039.WordLists.English);
             if (ot == OutputType.PrivateKey)
             {
                 CollumnCount = 3;
-
-                Stream = new TernaryStream(256, 0, new WifChecksum(), ot);
-                Items = new LinkedValues[32];
-                for (int i = 0; i < Items.Length; i++)
-                {
-                    Items[i] = new LinkedValues(Stream, null, 8);
-                }
+                itemCount = 32;
+                chunkSize = 8;
+                allWords = null;
             }
             else if (ot == OutputType.Bip39Mnemonic)
             {
                 CollumnCount = 2;
-
-                string[] allWords = BIP0039.GetAllWords(BIP0039.WordLists.English);
-                int wordCount, entropySize, checksumSize;
-                if (mnLen == MnemonicLength.Twelve)
+                chunkSize = 11;
+                itemCount = mnLen switch
                 {
-                    wordCount = 12;
-                    entropySize = 128;
-                    checksumSize = 4;
-                }
-                else if (mnLen == MnemonicLength.Fifteen)
-                {
-                    wordCount = 15;
-                    entropySize = 160;
-                    checksumSize = 5;
-                }
-                else if (mnLen == MnemonicLength.Eighteen)
-                {
-                    wordCount = 18;
-                    entropySize = 192;
-                    checksumSize = 6;
-                }
-                else if (mnLen == MnemonicLength.TwentyOne)
-                {
-                    wordCount = 21;
-                    entropySize = 224;
-                    checksumSize = 7;
-                }
-                else if (mnLen == MnemonicLength.TwentyFour)
-                {
-                    wordCount = 24;
-                    entropySize = 256;
-                    checksumSize = 8;
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-
-                Stream = new TernaryStream(entropySize + checksumSize, checksumSize, new Bip39Checksum(checksumSize), ot);
-                Items = new LinkedValues[wordCount];
-                for (int i = 0; i < Items.Length; i++)
-                {
-                    Items[i] = new LinkedValues(Stream, allWords, 11);
-                }
+                    MnemonicLength.Twelve => 12,
+                    MnemonicLength.Fifteen => 15,
+                    MnemonicLength.Eighteen => 18,
+                    MnemonicLength.TwentyOne => 21,
+                    MnemonicLength.TwentyFour => 24,
+                    _ => throw new ArgumentException("Mnemonic length is not defined."),
+                };
             }
             else if (ot == OutputType.ElectrumMnemonic)
             {
                 CollumnCount = 2;
-
-                string[] allWords = BIP0039.GetAllWords(BIP0039.WordLists.English);
-                Stream = new TernaryStream(132, 0, new ElectrumChecksum(), ot);
-                Items = new LinkedValues[12];
-                for (int i = 0; i < Items.Length; i++)
-                {
-                    Items[i] = new LinkedValues(Stream, allWords, 11);
-                }
+                itemCount = 12;
+                chunkSize = 11;
             }
             else
             {
-                throw new NotImplementedException();
+                throw new ArgumentException("Output type is not defined.");
+            }
+
+            Items = new LinkedValues[itemCount];
+            for (int i = 0; i < Items.Length; i++)
+            {
+                Items[i] = new LinkedValues(Stream, allWords, chunkSize);
             }
         }
 
