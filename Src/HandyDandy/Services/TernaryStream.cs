@@ -16,6 +16,19 @@ namespace HandyDandy.Services
 {
     public class TernaryStream : InpcBase
     {
+        /// <summary>
+        /// Only used for testing
+        /// </summary>
+        public TernaryStream(int binarySize, int disabledCount)
+        {
+            Items = new Ternary[binarySize];
+            for (int i = 0; i < binarySize; i++)
+            {
+                bool dis = i < binarySize - disabledCount;
+                Items[i] = new Ternary(dis);
+            }
+        }
+
         public TernaryStream(int binarySize, OutputType ot) : this(binarySize, 0, null, ot)
         {
         }
@@ -24,7 +37,7 @@ namespace HandyDandy.Services
         {
             DataBitSize = binarySize - disabledCount;
             DataByteSize = (binarySize - disabledCount) / 8;
-            outputType = ot;
+            OutType = ot;
             checksum = cs;
             Items = new Ternary[binarySize];
 
@@ -38,7 +51,7 @@ namespace HandyDandy.Services
 
         public TernaryStream(OutputType ot, MnemonicLength mnLen = MnemonicLength.Twelve)
         {
-            outputType = ot;
+            OutType = ot;
             int disabledCount = 0;
             if (ot == OutputType.PrivateKey)
             {
@@ -110,9 +123,11 @@ namespace HandyDandy.Services
         }
 
 
-        private readonly OutputType outputType;
         private readonly IChecksum? checksum;
-        private int readPosition, setPosition;
+
+        public OutputType OutType { get; private set; }
+        public int ReadPosition { get; private set; }
+        public int SetPosition { get; private set; }
 
         public Ternary[] Items { get; }
         public int TotalBitSize => Items.Length;
@@ -148,7 +163,7 @@ namespace HandyDandy.Services
                 return;
             }
 
-            if (outputType == OutputType.PrivateKey)
+            if (OutType == OutputType.PrivateKey)
             {
                 try
                 {
@@ -166,7 +181,7 @@ namespace HandyDandy.Services
                              $"Error message: {ex.Message}";
                 }
             }
-            else if (outputType == OutputType.Bip39Mnemonic)
+            else if (OutType == OutputType.Bip39Mnemonic)
             {
                 try
                 {
@@ -179,7 +194,7 @@ namespace HandyDandy.Services
                              $"Error message: {ex.Message}";
                 }
             }
-            else if (outputType == OutputType.ElectrumMnemonic)
+            else if (OutType == OutputType.ElectrumMnemonic)
             {
                 try
                 {
@@ -281,16 +296,16 @@ namespace HandyDandy.Services
             Ternary[] result = new Ternary[count];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = Items[i + readPosition];
+                result[i] = Items[i + ReadPosition];
             }
-            readPosition += count;
+            ReadPosition += count;
             return result;
         }
 
         public bool SetNext(bool b)
         {
-            Items[setPosition++].SetState(b);
-            return setPosition == Items.Length;
+            Items[SetPosition++].SetState(b);
+            return SetPosition == Items.Length;
         }
     }
 }
