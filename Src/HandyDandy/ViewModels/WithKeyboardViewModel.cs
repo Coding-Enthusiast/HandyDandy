@@ -82,7 +82,7 @@ namespace HandyDandy.ViewModels
         {
             if (CanSetNext)
             {
-                CanSetNext = !Stream.SetNext(b);
+                CanSetNext = Stream.SetNext(b);
             }
         }
     }

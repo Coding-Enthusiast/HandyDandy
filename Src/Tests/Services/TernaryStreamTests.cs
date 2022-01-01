@@ -48,22 +48,30 @@ namespace Tests.Services
         [Fact]
         public void SetNextTest()
         {
-            var stream = new TernaryStream(3, 1);
+            var stream = new TernaryStream(4, 1);
 
             Assert.True(stream.Items[0].IsEnabled);
             Assert.Equal(TernaryState.Unset, stream.Items[0].State);
-            stream.SetNext(true);
+            Assert.True(stream.SetNext(true));
             Assert.Equal(TernaryState.One, stream.Items[0].State);
+            Assert.False(stream.IsAllSet);
+            Assert.Equal(1, stream.SetBitCount);
 
             Assert.True(stream.Items[1].IsEnabled);
             Assert.Equal(TernaryState.Unset, stream.Items[1].State);
-            stream.SetNext(false);
+            Assert.True(stream.SetNext(false));
             Assert.Equal(TernaryState.Zero, stream.Items[1].State);
+            Assert.False(stream.IsAllSet);
+            Assert.Equal(2, stream.SetBitCount);
 
-            Assert.False(stream.Items[2].IsEnabled);
+            Assert.True(stream.Items[2].IsEnabled);
             Assert.Equal(TernaryState.Unset, stream.Items[2].State);
-            stream.SetNext(false);
+            Assert.False(stream.SetNext(false));
             Assert.Equal(TernaryState.Zero, stream.Items[2].State);
+            Assert.True(stream.IsAllSet);
+            Assert.Equal(3, stream.SetBitCount);
+
+            Assert.False(stream.Items[3].IsEnabled);
         }
     }
 }

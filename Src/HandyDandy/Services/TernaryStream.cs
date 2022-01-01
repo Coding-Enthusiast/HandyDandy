@@ -21,11 +21,13 @@ namespace HandyDandy.Services
         /// </summary>
         public TernaryStream(int binarySize, int disabledCount)
         {
+            DataBitSize = binarySize - disabledCount;
             Items = new Ternary[binarySize];
             for (int i = 0; i < binarySize; i++)
             {
-                bool dis = i < binarySize - disabledCount;
-                Items[i] = new Ternary(dis);
+                bool isEnabled = i < DataBitSize;
+                Items[i] = new Ternary(isEnabled);
+                Items[i].PropertyChanged += Item_PropertyChanged;
             }
         }
 
@@ -116,8 +118,8 @@ namespace HandyDandy.Services
 
             for (int i = 0; i < Items.Length; i++)
             {
-                bool isDisabled = i < DataBitSize;
-                Items[i] = new Ternary(isDisabled);
+                bool isEnabled = i < DataBitSize;
+                Items[i] = new Ternary(isEnabled);
                 Items[i].PropertyChanged += Item_PropertyChanged;
             }
         }
@@ -152,7 +154,21 @@ namespace HandyDandy.Services
         private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             SetBitCount = Items.Count(x => x.State != TernaryState.Unset);
-            IsAllSet = Items.All(x => x.State != TernaryState.Unset);
+            //byte[] cs = checksum.Compute(ba.Slice(0, DataSize));
+            //for (int i = 0; i < cs.Length; i++)
+            //{
+            //    Items[^(cs.Length - i)].SetState(cs[i]);
+            //}
+            for (int i = 0; i < DataBitSize; i++)
+            {
+                if (Items[i].State == TernaryState.Unset)
+                {
+                    IsAllSet = false;
+                    return;
+                }
+            }
+            IsAllSet = true;
+            // Don't put anything after this!
         }
 
         private void SetResult(ReadOnlySpan<byte> bytes)
@@ -302,10 +318,15 @@ namespace HandyDandy.Services
             return result;
         }
 
+        /// <summary>
+        /// Sets next bit until either reaching the end or a disabled bit.
+        /// </summary>
+        /// <param name="b">Bit value to set (true=1; false=0)</param>
+        /// <returns>True if there is more enabled bits to be set; otherwise false.</returns>
         public bool SetNext(bool b)
         {
             Items[SetPosition++].SetState(b);
-            return SetPosition == Items.Length;
+            return SetPosition < DataBitSize;
         }
     }
 }
