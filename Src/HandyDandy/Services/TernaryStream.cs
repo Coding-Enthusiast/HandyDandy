@@ -3,6 +3,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENCE or http://www.opensource.org/licenses/mit-license.php.
 
+using Autarkysoft.Bitcoin;
 using Autarkysoft.Bitcoin.Cryptography.Asymmetric.KeyPairs;
 using Autarkysoft.Bitcoin.ImprovementProposals;
 using HandyDandy.Models;
@@ -134,11 +135,6 @@ namespace HandyDandy.Services
         private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             SetBitCount = Items.Count(x => x.State != TernaryState.Unset);
-            //byte[] cs = checksum.Compute(ba.Slice(0, DataSize));
-            //for (int i = 0; i < cs.Length; i++)
-            //{
-            //    Items[^(cs.Length - i)].SetState(cs[i]);
-            //}
             for (int i = 0; i < DataBitSize; i++)
             {
                 if (Items[i].State == TernaryState.Unset)
@@ -149,65 +145,6 @@ namespace HandyDandy.Services
             }
             IsAllSet = true;
             // Don't put anything after this!
-        }
-
-        private void SetResult(ReadOnlySpan<byte> bytes)
-        {
-            if (!IsAllSet)
-            {
-                Result = "Not all bits are set. The result is still weak and can not be copied.";
-                return;
-            }
-
-            if (OutType == OutputType.PrivateKey)
-            {
-                try
-                {
-                    using PrivateKey temp = new(bytes.ToArray());
-                    Result = temp.ToWif(true);
-                }
-                catch (ArgumentOutOfRangeException ex)
-                {
-                    Result = $"The current bit stream is creating an out of range key.{Environment.NewLine}" +
-                             $"{ex.Message}";
-                }
-                catch (Exception ex)
-                {
-                    Result = $"An error occurred while converting the bit stream to a private key.{Environment.NewLine}" +
-                             $"Error message: {ex.Message}";
-                }
-            }
-            else if (OutType == OutputType.Bip39Mnemonic)
-            {
-                try
-                {
-                    using BIP0039 temp = new(bytes.ToArray());
-                    Result = temp.ToMnemonic();
-                }
-                catch (Exception ex)
-                {
-                    Result = $"An error occurred while converting the bit stream to a BIP-39 mnemonic.{Environment.NewLine}" +
-                             $"Error message: {ex.Message}";
-                }
-            }
-            else if (OutType == OutputType.ElectrumMnemonic)
-            {
-                try
-                {
-                    string mn = GetElectrumMnemonic();
-                    using ElectrumMnemonic temp = new(mn);
-                    Result = temp.ToMnemonic();
-                }
-                catch (Exception ex)
-                {
-                    Result = $"An error occurred while converting the bit stream to an Electrum mnemonic.{Environment.NewLine}" +
-                             $"Error message: {ex.Message}";
-                }
-            }
-            else
-            {
-                Result = "Undefined.";
-            }
         }
 
         private string GetElectrumMnemonic()
@@ -263,12 +200,6 @@ namespace HandyDandy.Services
             return res;
         }
 
-        private string _res = string.Empty;
-        public string Result
-        {
-            get => _res;
-            set => SetField(ref _res, value);
-        }
 
         public byte[] ToBytes()
         {
@@ -285,6 +216,92 @@ namespace HandyDandy.Services
                                Items[j + 7].ToBit() << 0);
             }
             return ba;
+        }
+
+        public bool TrySetChecksum()
+        {
+            if (!IsAllSet || checksum is null)
+            {
+                return false;
+            }
+
+            Span<byte> ba = ToBytes();
+            byte[] cs = checksum.Compute(ba.Slice(0, DataByteSize));
+            for (int i = 0; i < cs.Length; i++)
+            {
+                Items[^(cs.Length - i)].SetState(cs[i]);
+            }
+            return true;
+        }
+
+        public bool TryGetResult(out string res, out string hex, out string error)
+        {
+            error = res = hex = string.Empty;
+            if (!IsAllSet)
+            {
+                error = "Not all bits are set.";
+                return false;
+            }
+
+            var bytes = ToBytes();
+            hex = bytes.ToBase16();
+            if (OutType == OutputType.PrivateKey)
+            {
+                try
+                {
+                    using PrivateKey temp = new(bytes);
+                    res = temp.ToWif(true);
+                    return true;
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    error = $"The current bit stream is creating an out of range key.{Environment.NewLine}" +
+                            $"{ex.Message}";
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    error = $"An error occurred while converting the bit stream to a private key.{Environment.NewLine}" +
+                            $"Error message: {ex.Message}";
+                    return false;
+                }
+            }
+            else if (OutType == OutputType.Bip39Mnemonic)
+            {
+                try
+                {
+                    using BIP0039 temp = new(bytes.ToArray());
+                    res = temp.ToMnemonic();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    error = $"An error occurred while converting the bit stream to a BIP-39 mnemonic.{Environment.NewLine}" +
+                            $"Error message: {ex.Message}";
+                    return false;
+                }
+            }
+            else if (OutType == OutputType.ElectrumMnemonic)
+            {
+                try
+                {
+                    string mn = GetElectrumMnemonic();
+                    using ElectrumMnemonic temp = new(mn);
+                    res = temp.ToMnemonic();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    error = $"An error occurred while converting the bit stream to an Electrum mnemonic.{Environment.NewLine}" +
+                            $"Error message: {ex.Message}";
+                    return false;
+                }
+            }
+            else
+            {
+                error = "Undefined output type.";
+                return false;
+            }
         }
 
         public Ternary[] Next(int count)
