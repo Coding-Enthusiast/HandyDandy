@@ -12,7 +12,7 @@ namespace HandyDandy.Models
 {
     public class LinkedValues : InpcBase
     {
-        public LinkedValues() : this(new TernaryStream(3, 1, null, OutputType.PrivateKey),
+        public LinkedValues() : this(new TernaryStream(3, 1),
                                      new string[] { "Foo0", "Foo1", "Foo2", "Foo3" }, 1)
         {
         }

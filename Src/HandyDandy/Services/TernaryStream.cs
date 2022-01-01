@@ -31,26 +31,6 @@ namespace HandyDandy.Services
             }
         }
 
-        public TernaryStream(int binarySize, OutputType ot) : this(binarySize, 0, null, ot)
-        {
-        }
-
-        public TernaryStream(int binarySize, int disabledCount, IChecksum? cs, OutputType ot)
-        {
-            DataBitSize = binarySize - disabledCount;
-            DataByteSize = (binarySize - disabledCount) / 8;
-            OutType = ot;
-            checksum = cs;
-            Items = new Ternary[binarySize];
-
-            for (int i = 0; i < binarySize; i++)
-            {
-                bool dis = i < binarySize - disabledCount;
-                Items[i] = new Ternary(dis);
-                Items[i].PropertyChanged += Item_PropertyChanged;
-            }
-        }
-
         public TernaryStream(OutputType ot, MnemonicLength mnLen = MnemonicLength.Twelve)
         {
             OutType = ot;
