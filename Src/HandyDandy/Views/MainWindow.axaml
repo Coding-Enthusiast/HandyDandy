@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         x:Class="HandyDandy.Views.MainWindow"
         FontSize="14"
-        Height="780"
+        Height="850"
         Width="780"
         CanResize="False"
         Title="{Binding Title}">
@@ -15,7 +15,7 @@
     <vm:MainWindowViewModel/>
   </Design.DataContext>
 
-  <Grid RowDefinitions="auto,auto,*,auto">
+  <Grid RowDefinitions="auto,auto,*,auto,auto">
     <Grid ColumnDefinitions="*,*,*" Grid.Row="0">
       <ListBox Items="{Binding InputTypeList}"
                SelectedItem="{Binding SelectedInputType}"
@@ -44,7 +44,13 @@
       <TextBlock Text="/"/>
       <TextBlock Text="{Binding Generator.Stream.TotalBitSize}"
                  ToolTip.Tip="Binary size"/>
-      <Button Content="Fill all with 0" 
+    </StackPanel>
+
+    <ContentControl Content="{Binding Generator}"
+                    Grid.Row="2"/>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="3">
+      <Button Content="Fill all with 0"
               Command="{Binding Fill}"
               CommandParameter="False"
               Margin="30,0,0,0"/>
@@ -54,10 +60,7 @@
               Margin="30,0,0,0"/>
     </StackPanel>
 
-    <ContentControl Content="{Binding Generator}"
-                    Grid.Row="2"/>
-
-    <Grid ColumnDefinitions="*,100" RowDefinitions="auto,auto,auto" Margin="5" Grid.Row="3">
+    <Grid ColumnDefinitions="*,100" RowDefinitions="auto,auto,auto" Margin="5" Grid.Row="4">
       <TextBox Text="{Binding Result}"
                TextWrapping="Wrap"
                IsReadOnly="True"
