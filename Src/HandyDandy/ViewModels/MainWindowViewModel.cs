@@ -10,6 +10,7 @@ using Avalonia;
 using HandyDandy.Models;
 using HandyDandy.MVVM;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -29,17 +30,34 @@ namespace HandyDandy.ViewModels
             MnemonicLengthList = EnumHelper.GetDescriptiveEnums<MnemonicLength>().ToArray();
             _selMnLen = MnemonicLengthList.First();
 
-            // This has to be called last
-            BuildNewGenerator();
+            var prvGen1 = new BinaryGridViewModel(OutputType.PrivateKey, MnemonicLength.Twelve);
+            var prvGen2 = new GroupedBinaryViewModel(OutputType.PrivateKey, MnemonicLength.Twelve);
+            var prvGen3 = new WithKeyboardViewModel(OutputType.PrivateKey, MnemonicLength.Twelve);
+            var elecGen1 = new BinaryGridViewModel(OutputType.ElectrumMnemonic, MnemonicLength.Twelve);
+            var elecGen2 = new GroupedBinaryViewModel(OutputType.ElectrumMnemonic, MnemonicLength.Twelve);
+            var elecGen3 = new WithKeyboardViewModel(OutputType.ElectrumMnemonic, MnemonicLength.Twelve);
+
+            IEnumerable<MnemonicLength> lens = EnumHelper.GetAllEnumValues<MnemonicLength>();
+            foreach (var len in lens)
+            {
+                GeneratorList.Add(InputType.BinaryGrid.Add(OutputType.PrivateKey, len), prvGen1);
+                GeneratorList.Add(InputType.BinaryGrid.Add(OutputType.Bip39Mnemonic, len), new BinaryGridViewModel(OutputType.Bip39Mnemonic, len));
+                GeneratorList.Add(InputType.BinaryGrid.Add(OutputType.ElectrumMnemonic, len), elecGen1);
+
+                GeneratorList.Add(InputType.GroupedBinary.Add(OutputType.PrivateKey, len), prvGen2);
+                GeneratorList.Add(InputType.GroupedBinary.Add(OutputType.Bip39Mnemonic, len), new GroupedBinaryViewModel(OutputType.Bip39Mnemonic, len));
+                GeneratorList.Add(InputType.GroupedBinary.Add(OutputType.ElectrumMnemonic, len), elecGen2);
+
+                GeneratorList.Add(InputType.Keyboard.Add(OutputType.PrivateKey, len), prvGen3);
+                GeneratorList.Add(InputType.Keyboard.Add(OutputType.Bip39Mnemonic, len), new WithKeyboardViewModel(OutputType.Bip39Mnemonic, len));
+                GeneratorList.Add(InputType.Keyboard.Add(OutputType.ElectrumMnemonic, len), elecGen3);
+            }
         }
 
 
-        public static bool IsDebug =>
-#if DEBUG
-            true;
-#else
-            false;
-#endif
+
+        private readonly Dictionary<int, GeneratorVM> GeneratorList = new(21);
+
 
         public void Fill(bool b)
         {
@@ -64,13 +82,7 @@ namespace HandyDandy.ViewModels
         public InputType SelectedInputType
         {
             get => _selIn;
-            set
-            {
-                if (SetField(ref _selIn, value))
-                {
-                    BuildNewGenerator();
-                }
-            }
+            set => SetField(ref _selIn, value);
         }
 
         public OutputType[] OutputTypeList { get; }
@@ -79,13 +91,7 @@ namespace HandyDandy.ViewModels
         public OutputType SelectedOutputType
         {
             get => _selOut;
-            set
-            {
-                if (SetField(ref _selOut, value))
-                {
-                    BuildNewGenerator();
-                }
-            }
+            set => SetField(ref _selOut, value);
         }
 
         public DescriptiveEnum<MnemonicLength>[] MnemonicLengthList { get; }
@@ -94,35 +100,21 @@ namespace HandyDandy.ViewModels
         public DescriptiveEnum<MnemonicLength> SelectedMnemonicLength
         {
             get => _selMnLen;
-            set
-            {
-                if (SetField(ref _selMnLen, value))
-                {
-                    BuildNewGenerator();
-                }
-            }
+            set => SetField(ref _selMnLen, value);
         }
 
         [DependsOnProperty(nameof(SelectedOutputType))]
         public bool IsMnemonicLengthVisible => SelectedOutputType == OutputType.Bip39Mnemonic;
 
 
-        private void BuildNewGenerator()
-        {
-            Generator = SelectedInputType switch
-            {
-                InputType.BinaryGrid => new BinaryGridViewModel(SelectedOutputType, SelectedMnemonicLength.Value),
-                InputType.GroupedBinary => new GroupedBinaryViewModel(SelectedOutputType, SelectedMnemonicLength.Value),
-                InputType.Keyboard => new WithKeyboardViewModel(SelectedOutputType, SelectedMnemonicLength.Value),
-                _ => throw new NotImplementedException(),
-            };
-        }
-
-        private GeneratorVM _generator;
+        [DependsOnProperty(nameof(SelectedInputType), nameof(SelectedOutputType), nameof(SelectedMnemonicLength))]
         public GeneratorVM Generator
         {
-            get => _generator;
-            set => SetField(ref _generator, value);
+            get
+            {
+                int key = SelectedInputType.Add(SelectedOutputType, SelectedMnemonicLength.Value);
+                return GeneratorList[key];
+            }
         }
 
         private bool _isCopy;

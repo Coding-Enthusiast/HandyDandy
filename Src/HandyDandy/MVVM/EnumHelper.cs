@@ -12,6 +12,8 @@ namespace HandyDandy.MVVM
 {
     public static class EnumHelper
     {
+        public static int Add(this InputType a, OutputType b, MnemonicLength c) => (int)a | (int)b | (int)c;
+
         public static IEnumerable<T> GetAllEnumValues<T>() where T : Enum
         {
             return Enum.GetValues(typeof(T)).Cast<T>();
