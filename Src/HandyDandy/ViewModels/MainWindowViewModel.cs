@@ -132,6 +132,12 @@ namespace HandyDandy.ViewModels
             set => SetField(ref _isCopy, value);
         }
 
+        private string _res = string.Empty;
+        public string Result
+        {
+            get => _res;
+            set => SetField(ref _res, value);
+        }
 
 
         [DependsOnProperty(nameof(SelectedOutputType))]
@@ -157,7 +163,7 @@ namespace HandyDandy.ViewModels
 
             byte[] ba = Generator.Stream.ToBytes();
             string hex = Base16.Encode(ba);
-            Application.Current.Clipboard.SetTextAsync(hex);
+            Application.Current?.Clipboard?.SetTextAsync(hex);
         }
 
         public void CopyOutput()
@@ -173,17 +179,30 @@ namespace HandyDandy.ViewModels
                     _ => throw new NotImplementedException()
                 };
 
-                Application.Current.Clipboard.SetTextAsync(res);
+                Application.Current?.Clipboard?.SetTextAsync(res);
             }
             catch
             {
-                Application.Current.Clipboard.ClearAsync();
+                Application.Current?.Clipboard?.ClearAsync();
             }
         }
 
         public void Finilize()
         {
-            // TODO: get stream bytes, check in range, set checksum, set IsCopyReady
+            if (!Generator.Stream.TrySetChecksum())
+            {
+                Result = "Could not set checksum.";
+            }
+            else if (Generator.Stream.TryGetResult(out string res, out string hex, out string error))
+            {
+                Result = $"{res}{Environment.NewLine}{hex}";
+                IsCopyReady = true;
+            }
+            else
+            {
+                Result = error;
+                IsCopyReady = false;
+            }
         }
     }
 }
